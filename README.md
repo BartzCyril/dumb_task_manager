@@ -90,7 +90,19 @@
 | **Manque de protection des routes sensibles**                | Certaines routes sensibles, comme la connexion ou l'inscription, ne sont pas protégées contre les accès non autorisés.                                                        | Utiliser des middlewares pour protéger les routes sensibles, comme un middleware de vérification de session ou d'authentification avant d'accéder aux routes. |
 | **Incohérence dans les noms de route**                       | Les noms de routes pour des actions similaires (par exemple, `login` et `register`) ne sont pas cohérents.                                                                    | Harmoniser les noms des routes. Par exemple, utiliser `/user/login` et `/user/register` pour des actions similaires, afin de respecter une structure uniforme et cohérente dans l'API. |
 
+#### BDD
 
+Mettre en place une gestion de droits d'accès afin que chaque utilisateur est chacun leurs droits. Par exemple que seul les administrateurs on accés à la route /admin. Que seul les utilisateurs connectés on accès à la route /task et accès uniquement à leurs informations. Les solutions peuvent être :
+
+Mettre un champ dans la base de données afin de déterminer si l'utilisateur est administrateur ou non et vérifier dans le code si la valeur est bien à 1. Si il est un 1 on le laisse accès à la page, sinon on le redirige sur une autre page.
+Pour les routes en /tasks on vérifie que l'utilisateur est connecté grâce à la présence d'un token JWT. Ce même token permettra à l'utilisateur d'intéragir avec ces données et non celle des autres.
+
+#### Package.json
+
+Mettre à jour les dépendances.
+
+#### Qualité des tests
+Les tests n'existent pas.
 
 
 
