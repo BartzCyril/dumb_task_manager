@@ -24,6 +24,14 @@ const User = {
         });
     },
 
+
+    findByEmail: (username, callback) => {
+        const query = 'SELECT * FROM users WHERE email = ?';
+        db.get(query, [username], (err, user) => {
+            callback(err, user)
+        });
+    },
+
     authenticate: (username, password, callback) => {
         User.findByUsername(username, (err, user) => {
             console.log({ user, password })
