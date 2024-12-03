@@ -5,7 +5,7 @@ const users = require('../models/user');
 const bcrypt = require('bcrypt');
 
 // Placeholder routes for authentication
-router.get('/login', (req, res) => res.render('login'));
+router.get('/login', (req, res) => res.render('login', { user: undefined }));
 router.post('/login', (req, res) => {
     users.authenticate(req.body.username, req.body.password, (user) => {
         if (user.connected) {
@@ -27,6 +27,6 @@ router.get('/user/register', (req, res) => {
         }
     })
 })
-router.get('/register', (req, res) => res.render('register'));
+router.get('/register', (req, res) => res.render('register',{ user: undefined }));
 
 module.exports = router;

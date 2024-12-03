@@ -1,13 +1,5 @@
-body {
-    background-color: aqua;
-}
-
-.task{
-    background-color: bisque;
-    width: 200px;
-}
-
-.add_task{
-    background-color: burlywood;
-    width: 400px;
+.error {
+    color: red;
+    margin: 1rem 0;
+    font-weight: bold;
 }
