@@ -1,18 +1,47 @@
-<h2>Register Page</h2><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>register</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-    <p>please fill the form to register</p>
-    <form action="/user/register" method="get">
-        <label for="username">username : </label><input type="text" name="username">
-        <label for="email">email :</label><input type="text" name="email">
-        <label for="password">password :</label><input type="text" name="password">
-        <button type="submit">Register !</button>
-    </form>
-</body>
-</html>
+<script src="/js/auth-validation.js"></script>
+
+<%- include('base/layout', {
+body: `
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div>
+<h2 class="text-center mb-4">Register</h2>
+<form action="/auth/register" method="POST" id="AuthForm">
+<div class="mb-3">
+<label for="username" class="form-label">Username</label>
+<input type="text" class="form-control" id="username" name="username" required>
+<div id="AuthForm-error-username" class="error d-none"></div>
+</div>
+<div class="mb-3">
+<label for="password" class="form-label">Password</label>
+<input type="password" class="form-control" id="password" name="password" required>
+<div id="AuthForm-error-password" class="error d-none"></div>
+</div>
+<div class="mb-3">
+<label for="confirmPassword" class="form-label">Confirm Password</label>
+<input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+<div id="AuthForm-error-confirmPassword" class="error d-none"></div>
+</div>
+<button type="submit" class="btn btn-primary w-100">Register</button>
+<div id="AuthForm-error-global" class="error d-none"></div>
+</form>
+<p class="text-center mt-3">
+Already have an account? <a href="/auth/login">Login</a>
+</p>
+</div>
+</div>
+</div>
+`
+}) %>
+
+<script>
+    setupRealTimeValidation()
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("AuthForm");
+        if (form) {
+            form.addEventListener("submit", function (e) {
+                submit(e);
+            });
+        }
+    });
+</script>
