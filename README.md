@@ -29,18 +29,20 @@
 
 | **Aspect**                  | **Problème détecté**                                                                                                   | **Suggestions d'amélioration**                                                                                           |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| **Design (UI)**             | - Couleur de fond turquoise trop vive, similaire à la page d'accueil.                                                | - Utiliser une couleur plus douce.                                                           |
+| **Design (UI)**             | - Couleur de fond turquoise trop vive, similaire à la page d'accueil.                                                | - Utiliser une couleur plus douce.                                                                                       |
 |                             | - Alignement des champs incorrect : les champs de formulaire sont alignés horizontalement, rendant la lecture difficile.| - Aligner verticalement les champs pour une meilleure lisibilité et organisation.                                        |
 |                             | - Bouton "Register!" peu visible et non attractif.                                                                   | - Utiliser un bouton plus grand avec un design clair et attractif.                                                       |
 | **Accessibilité**           | - Pas d'indication sur les formats attendus (ex. email, mot de passe, etc.).                                           | - Ajouter des placeholders ou des labels expliquant les formats requis (ex. "Enter a valid email").                      |
 |                             | - Absence de contrôle de saisie ou de messages d'erreur en cas de données incorrectes ou incomplètes.                  | - Implémenter une validation des champs et afficher des messages d'erreur clairs et descriptifs.                         |
 | **Expérience utilisateur (UX)** | - Pas d'informations sur l’objectif de l'inscription ou sur ce qui se passe après.                                      | - Ajouter une explication claire du processus d'inscription et des étapes suivantes.                                     |
 |                             | - L'utilisateur peut saisir des données invalides ou incomplètes sans avertissement.                                  | - Vérifier les champs avant soumission (ex. email valide, mot de passe suffisamment long).                                |
-|                             | - La connexion au serveur échoue, entraînant une erreur générique.                                       | - Vérifier si le serveur est en cours d'exécution et si les ports sont configurés correctement (par défaut `localhost:3000`). |
+|                             | - La connexion au serveur échoue, entraînant une erreur générique.                                                    | - Vérifier si le serveur est en cours d'exécution et si les ports sont configurés correctement (par défaut `localhost:3000`). |
 |                             | - Le formulaire d'inscription utilise la méthode GET, exposant les données sensibles dans l'URL.                      | - Utiliser la méthode POST pour transmettre les données de manière sécurisée.                                            |
+|                             | - Dans le champ "mot de passe", le texte saisi est visible en clair.                                                  | - Configurer le champ "mot de passe" pour masquer le texte à l'aide de l'attribut `type="password"`.                     |
+|                             | - Champ "confirmation mot de passe" manquant.                                                                        | - Ajouter un champ de confirmation pour que l'utilisateur puisse vérifier la saisie de son mot de passe.                 |
 | **Fonctionnalité**          | - Pas de contrôle sur les champs de saisie, aucune validation des données (ex. email non valide accepté).              | - Ajouter une validation côté client (JS) et côté serveur pour empêcher l'envoi de données incorrectes.                  |
-|                             | - La connexion échoue car le serveur semble inaccessible, mal configuré ou une erreur sur les champs envoyés par le formulaire.                                            | - Assurer que le serveur est démarré correctement, que les routes sont configurées, que les dépendances sont installées et que les données sont correctement utilisées.|
-|                             | - Aucun retour en cas de succès ou d'échec sur la page d'inscription.                                                 | - Afficher un message de confirmation pour une inscription réussie ou des erreurs si elle échoue.                        |                     |
+|                             | - La connexion échoue car le serveur semble inaccessible, mal configuré ou une erreur sur les champs envoyés par le formulaire. | - Assurer que le serveur est démarré correctement, que les routes sont configurées, que les dépendances sont installées et que les données sont correctement utilisées. |
+|                             | - Aucun retour en cas de succès ou d'échec sur la page d'inscription.                                                 | - Afficher un message de confirmation pour une inscription réussie ou des erreurs si elle échoue.                        |
 
 ### 1.2 - Tentatives d'attaque de l'app Individuel
 
@@ -73,6 +75,7 @@
 | **Méthodes des formulaires sensibles**                 | Les formulaires sensibles comme la connexion ou l’enregistrement utilisent une méthode `GET` au lieu de `POST`, exposant les données dans l'URL.          | Utiliser la méthode `POST` pour tous les formulaires contenant des données sensibles comme les mots de passe. |
 | **Messages d’erreur utilisateur absents**              | Pas de retour visuel sur les erreurs pour guider les utilisateurs en cas de problème (ex. : champ obligatoire non rempli).                                | Implémenter des messages d’erreur clairs à afficher sous ou près des champs concernés.                         |
 | **Manque d'instructions dans les formulaires**         | Les formulaires manquent d’indications claires sur le format attendu (ex. : mot de passe, email, etc.).                                                   | Ajouter des `placeholder`, des descriptions ou des info-bulles pour guider les utilisateurs.                  |
+| **La mise en commun des balises**         | Des sections comme le header sont dupliquées dans plusieurs fichiers, ce qui complique les mises à jour et la gestion des modifications.                                                 | Regrouper les balises dans des fichiers communs.                  |
 
 #### app.js
 
@@ -103,6 +106,10 @@ Pour les routes en /tasks on vérifie que l'utilisateur est connecté grâce à 
 #### Package.json
 
 Mettre à jour les dépendances.
+
+#### Global
+
+Dans certains fichiers, il y a des problèmes au niveau de l'indentation. Cela empêche le bon maintient du code
 
 #### Qualité des tests
 Les tests n'existent pas.
