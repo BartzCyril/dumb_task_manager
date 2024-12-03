@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 const db = new sqlite3.Database(path.join(__dirname, '../config/tasks.sqlite'), (err) => {
 });
@@ -8,7 +9,7 @@ const db = new sqlite3.Database(path.join(__dirname, '../config/tasks.sqlite'), 
 const User = {
     create: (user, callback) => {
         const query = 'INSERT INTO users (username, password, email) VALUES (?, ?, ?)';
-        const params = [user.username, user.password, user.email];
+        const params = [user.username, user.hash, user.email];
         db.run(query, params, function (err) {
             callback(null, { id: this.lastID, ...user });
         });
@@ -31,7 +32,7 @@ const User = {
     authenticate: (username, password, callback) => {
         User.findByUsername(username, (err, user) => {
             console.log({ user, password })
-            if (user.password == password) {
+            if (bcrypt.compareSync(password, user.password)) {
                 user.connected = true;
                 return callback(user)
             }
