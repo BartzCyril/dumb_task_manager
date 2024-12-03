@@ -20,7 +20,10 @@
 |                             | - Pas de support pour les lecteurs d'écran ni de navigation alternative.                                     | - Ajouter des balises ARIA et indiquer les raccourcis claviers.                                                          |
 | **Expérience utilisateur (UX)** | - Le lien "go to login page" n'est pas présenté comme un bouton, ce qui peut être confus.                    | - Transformer le lien en bouton bien visible avec un design clair.                                                       |
 |                             | - Message d'accueil peu informatif ("Welcome to DTM! (Dumb Task Manager)").                                  | - Ajouter une courte description expliquant les fonctionnalités ou l’objectif de l'application.                         |
-|                             | - Absence d'explication, on ne sait pas pourquoi on doit se connecter                                 |       - Ajouter une phrase expliquant la raison ou les avantages de la connexion.               |                                                              |
+|                             | - Absence d'explication, on ne sait pas pourquoi on doit se connecter                                 |       - Ajouter une phrase expliquant la raison ou les avantages de la connexion.               |                                                              | 
+|                             | - On ne peut pas se déconnecter                                |       - Ajouter un bouton de déconnection.               |                                                              | 
+|                             | - Le système de numération des tâches utilise l'id de la tâche                                 |       - Changer le système de numérotation des tâches.               |                                                              | 
+|                             | - Task completed est inutile                                |       - Il n'y a aucun indicateur pour dire si la tâche est faite où non               |                                                              | 
 
 ##### Page d'inscription et de connexion
 
