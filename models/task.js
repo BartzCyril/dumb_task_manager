@@ -17,7 +17,6 @@ const Task = {
 
     create: (t, c) => {
         const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES (\'' + t.title + '\',\' ' + t.description + '\', ' + t.completed + ', ' + t.user_id + ' )';
-        console.log(query)
         db.run(query, [], function (err) {
             c(null, { id: this.lastID });
         });
