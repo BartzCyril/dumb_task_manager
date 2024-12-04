@@ -2,8 +2,9 @@ const db = require('../config/database.js')
 
 const Task = {
     createTask: (task, callback) => {
-        const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES (\'' + task.title + '\',\' ' + task.description + '\', ' + task.completed + ', ' + task.user_id + ' )';
-        db.run(query, [], function (err) {
+        const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES (?, ?, ?, ?)';
+        const params = [task.title, task.description, task.completed, task.user_id]
+        db.run(query, params, function (err) {
             callback(null, { id: this.lastID });
         });
     },
