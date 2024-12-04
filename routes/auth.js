@@ -7,18 +7,23 @@ const bcrypt = require('bcrypt');
 // Placeholder routes for authentication
 router.get('/login', (req, res) => res.render('login', { user: undefined }));
 router.post('/login', (req, res) => {
-    users.authenticate(req.body.username, req.body.password, (user) => {
+    users.authenticate(req.body.username, req.body.password, (err, user) => {
+        if(err) {
+            res.status(500).send(`Une erreur est survenue lors de la connexion ${err.message}`);
+            return;
+        }
+
         if (!user.connected) {
             res.status(400).send("Le nom d'utilisateur ou le mot de passe est incorrect");
             return;
         }
-        res.redirect('/?userId=' + user.id)
     })
 })
+
 router.get('/user/register', (req, res) => {
-    let username = req.query.username;
-    var password = req.query.password;
-    let email = req.query.email;
+    const username = req.query.username;
+    const password = req.query.password;
+    const email = req.query.email;
 
     // Vérifie si les champs ne sont pas vides
     if(!username){
@@ -49,20 +54,20 @@ router.get('/user/register', (req, res) => {
         return;
     }
 
-    users.findByUsername(username , (err, user) => {
+    users.findUserByUsername(username , (err, user) => {
         if(user != undefined){
             res.status(400).send(`L'utilisateur ${username} existe déjà`);
             return;
         }
 
-        users.findByEmail(email, (err, user) => {
+        users.findUserByEmail(email, (err, user) => {
             if(user != undefined){
                 res.status(400).send(`L'adresse mail ${email} existe déjà`);
                 return;
             }
 
             const hash = bcrypt.hashSync(password, 10)
-            users.create({ username, hash, email }, (err, user) => {
+            users.createUser({ username, hash, email }, (err, user) => {
                 if (user) {
                     res.redirect('/login');
                 } else {
