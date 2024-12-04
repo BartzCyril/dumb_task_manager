@@ -8,9 +8,11 @@ const bcrypt = require('bcrypt');
 router.get('/login', (req, res) => res.render('login'));
 router.post('/login', (req, res) => {
     users.authenticate(req.body.username, req.body.password, (user) => {
-        if (user.connected) {
-            res.redirect('/?userId=' + user.id)
+        if (!user.connected) {
+            res.status(400).send("Le nom d'utilisateur ou le mot de passe est incorrect");
+            return;
         }
+        res.redirect('/?userId=' + user.id)
     })
 })
 router.get('/user/register', (req, res) => {
@@ -69,14 +71,6 @@ router.get('/user/register', (req, res) => {
             });
         });
     })
-
-    /* users.create({ username, password, email }, (err, user) => {
-        if (user) {
-            res.redirect('/login');
-        } else {
-            res.redirect('/')
-        }
-    }); */
 })
 router.get('/register', (req, res) => res.render('register'));
 
