@@ -34,8 +34,14 @@ const User = {
     authenticate: (username, password, callback) => {
         User.findByUsername(username, (err, user) => {
             console.log({ user, password })
-            if (user.password == password) {
+            if(user != undefined && user.password == password){
                 user.connected = true;
+                return callback(user)
+            }
+            else{
+                user = {
+                    connected: false
+                };
                 return callback(user)
             }
         });
