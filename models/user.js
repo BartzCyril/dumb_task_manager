@@ -17,7 +17,6 @@ const User = {
     },
 
     findByUsername: (username, callback) => {
-        console.log(username)
         const query = 'SELECT * FROM users WHERE username = ?';
         db.get(query, [username], (err, user) => {
             callback(err, user)
@@ -26,7 +25,6 @@ const User = {
 
     authenticate: (username, password, callback) => {
         User.findByUsername(username, (err, user) => {
-            console.log({ user, password })
             if (bcrypt.compareSync(password, user.password)) {
                 user.connected = true;
                 return callback(user)

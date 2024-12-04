@@ -25,7 +25,6 @@ const taskRoutes = require('./routes/tasks');
 const adminRoutes = require('./routes/admin');
 
 app.get('/', (req, res) => {
-    console.log(req.query)
     var userId = req.query.userId
     res.render('index', { user: undefined })
 })
