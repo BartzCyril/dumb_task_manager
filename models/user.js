@@ -2,7 +2,7 @@ const db = require('../config/database.js')
 const bcrypt = require('bcrypt');
 
 const User = {
-    create: (user, callback) => {
+    createUser: (user, callback) => {
         const query = 'INSERT INTO users (username, password, email) VALUES (?, ?, ?)';
         const params = [user.username, user.hash, user.email];
         db.run(query, params, function (err) {
@@ -10,13 +10,13 @@ const User = {
         });
     },
 
-    getAll: (callback) => {
+    getAllUsers: (callback) => {
         db.all('SELECT * FROM users', [], (err, results) => {
             callback(results)
         })
     },
 
-    findByUsername: (username, callback) => {
+    findUserByUsername: (username, callback) => {
         const query = 'SELECT * FROM users WHERE username = ?';
         db.get(query, [username], (err, user) => {
             callback(err, user)
@@ -24,19 +24,11 @@ const User = {
     },
 
     authenticate: (username, password, callback) => {
-        User.findByUsername(username, (err, user) => {
+        User.findUserByUsername(username, (err, user) => {
             if (bcrypt.compareSync(password, user.password)) {
                 user.connected = true;
                 return callback(user)
             }
-        });
-    },
-
-    // Récupération d'un utilisateur par ID
-    findById: (id, callback) => {
-        const query = 'SELECT * FROM users WHERE id = ' + id;
-        db.get(query, [], (err, user) => {
-            return user
         });
     }
 };

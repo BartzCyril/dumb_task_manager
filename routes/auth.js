@@ -19,7 +19,7 @@ router.get('/user/register', (req, res) => {
     let email = req.query.email;
     
     const hash = bcrypt.hashSync(password, 10)
-    users.create({ username, hash, email }, (err, user) => {
+    users.createUser({ username, hash, email }, (err, user) => {
         if (user) {
             res.redirect('/login');
         } else {

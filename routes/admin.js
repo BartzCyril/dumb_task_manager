@@ -4,7 +4,7 @@ const users = require('../models/user');
 
 
 router.get('/', (req, res) => {
-    users.getAll((users) => {
+    users.getAllUsers((users) => {
         res.render('admin', { users })
     })
 
