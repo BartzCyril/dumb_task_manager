@@ -24,11 +24,25 @@ const User = {
         });
     },
 
+
+    findByEmail: (username, callback) => {
+        const query = 'SELECT * FROM users WHERE email = ?';
+        db.get(query, [username], (err, user) => {
+            callback(err, user)
+        });
+    },
+
     authenticate: (username, password, callback) => {
         User.findByUsername(username, (err, user) => {
             console.log({ user, password })
-            if (bcrypt.compareSync(password, user.password)) {
+            if (user != undefined && bcrypt.compareSync(password, user.password)) {
                 user.connected = true;
+                return callback(user)
+            }
+            else{
+                user = {
+                    connected: false
+                };
                 return callback(user)
             }
         });

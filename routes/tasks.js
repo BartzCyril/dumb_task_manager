@@ -33,6 +33,17 @@ router.get('/remove', (req, res) => {
 router.post('/', authenticate, (req, res) => {
     const { title, description, completed } = req.body;
     let userId = req.query.userId
+
+    if(!title){
+        res.status(400).send("Le champ 'task title' est obligatoire");
+        return;
+    }
+
+    if(!description){
+        res.status(400).send("Le champ 'task description' est obligatoire");
+        return;
+    }
+    
     tasks.create({ user_id: userId, title, description, completed: 0 }, (err, task) => {
         if (task) {
             res.redirect(`/tasks?userId=${userId}`)
