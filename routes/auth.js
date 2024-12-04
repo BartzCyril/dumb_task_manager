@@ -49,20 +49,20 @@ router.get('/user/register', (req, res) => {
         return;
     }
 
-    users.findByUsername(username , (err, user) => {
+    users.findUserByUsername(username , (err, user) => {
         if(user != undefined){
             res.status(400).send(`L'utilisateur ${username} existe déjà`);
             return;
         }
 
-        users.findByEmail(email, (err, user) => {
+        users.findUserByEmail(email, (err, user) => {
             if(user != undefined){
                 res.status(400).send(`L'adresse mail ${email} existe déjà`);
                 return;
             }
 
             const hash = bcrypt.hashSync(password, 10)
-            users.create({ username, hash, email }, (err, user) => {
+            users.createUser({ username, hash, email }, (err, user) => {
                 if (user) {
                     res.redirect('/login');
                 } else {

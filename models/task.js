@@ -1,9 +1,14 @@
 const db = require('../config/database.js')
 
-// Modèle Task avec des fonctions pour interagir avec la base de données
 const Task = {
-    // Récupérer toutes les tâches d'un utilisateur
-    getAllByUser: (userId, callback) => {
+    createTask: (task, callback) => {
+        const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES (\'' + task.title + '\',\' ' + task.description + '\', ' + task.completed + ', ' + task.user_id + ' )';
+        db.run(query, [], function (err) {
+            callback(null, { id: this.lastID });
+        });
+    },
+    
+    getAllTaskByUserId: (userId, callback) => {
         const query = 'SELECT * FROM tasks WHERE user_id = ?';
         db.all(query, [userId], (err, rows) => {
             if (err) {
@@ -15,27 +20,19 @@ const Task = {
         });
     },
 
-    create: (t, c) => {
-        const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES (\'' + t.title + '\',\' ' + t.description + '\', ' + t.completed + ', ' + t.user_id + ' )';
-        db.run(query, [], function (err) {
-            c(null, { id: this.lastID });
-        });
-    },
-
-    update: (id, updates, callback) => {
+    updateTask: (id, task, callback) => {
         const query = `
             UPDATE tasks
             SET title = ?, description = ?, completed = ?
             WHERE id = ?
         `;
-        const params = [updates.title, updates.description, updates.completed, id];
+        const params = [task.title, task.description, task.completed, id];
         db.run(query, params, function (err) {
-            callback(null, { id, ...updates });
+            callback(null, { id, ...task });
         });
     },
 
-    // Supprimer une tâche
-    delete: (id, callback) => {
+    deleteTask: (id, callback) => {
         const query = 'DELETE FROM tasks WHERE id = ?';
         db.run(query, [id], function (err) {
             if (err) {
