@@ -13,17 +13,25 @@ const authenticate = (req, res, next) => {
 };
 
 router.get('/', (req, res) => {
-    var userId = req.query.userId;
-    tasks.getAllByUser(parseInt(userId), (err, data) => {
+    const userId = req.query.userId;
+    tasks.getAllTaskByUserId(parseInt(userId), (err, data) => {
+        if(err){
+            res.status(500).send(`Une erreur est survenue lors de la récupération des tâches ${err.message}`);
+            return;
+        }
         res.render('dashboard', { data, userId })
-    })
+    });
 });
 
 router.get('/remove', (req, res) => {
-    var taskId = req.query.taskId;
-    var userId = req.query.userId;
+    const taskId = req.query.taskId;
+    const userId = req.query.userId;
     if (userId) {
-        tasks.delete(taskId, () => {
+        tasks.deleteTask(taskId, (err) => {
+            if(err){
+                res.status(500).send(`Une erreur est survenue lors de la suppression de la tâche ${err.message}`);
+                return;
+            }
             res.redirect(`/tasks?userId=${userId}`)
         })
     }
@@ -32,11 +40,24 @@ router.get('/remove', (req, res) => {
 
 router.post('/', authenticate, (req, res) => {
     const { title, description, completed } = req.body;
-    let userId = req.query.userId
-    tasks.create({ user_id: userId, title, description, completed: 0 }, (err, task) => {
-        if (task) {
-            res.redirect(`/tasks?userId=${userId}`)
+    const userId = req.query.userId
+
+    if(!title){
+        res.status(400).send("Le champ 'task title' est obligatoire");
+        return;
+    }
+
+    if(!description){
+        res.status(400).send("Le champ 'task description' est obligatoire");
+        return;
+    }
+    
+    tasks.createTask({ user_id: userId, title, description, completed: 0 }, (err) => {
+        if (err) {
+            res.status(500).send(`Une erreur est survenue lors de la création de la tâche ${err.message}`);
+            return;
         }
+        res.redirect(`/tasks?userId=${userId}`)
     })
 });
 

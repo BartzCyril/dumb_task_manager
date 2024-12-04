@@ -1,43 +1,48 @@
 const db = require('../config/database.js')
+const bcrypt = require('bcrypt');
 
 const User = {
-    create: (user, callback) => {
+    createUser: (user, callback) => {
         const query = 'INSERT INTO users (username, password, email) VALUES (?, ?, ?)';
-        const params = [user.username, user.password, user.email];
+        const params = [user.username, user.hash, user.email];
         db.run(query, params, function (err) {
-            callback(null, { id: this.lastID, ...user });
+            callback(err, { id: this.lastID, ...user });
         });
     },
 
-    getAll: (callback) => {
+    getAllUsers: (callback) => {
         db.all('SELECT * FROM users', [], (err, results) => {
-            callback(results)
+            callback(err, results)
         })
     },
 
-    findByUsername: (username, callback) => {
-        console.log(username)
+    findUserByUsername: (username, callback) => {
         const query = 'SELECT * FROM users WHERE username = ?';
         db.get(query, [username], (err, user) => {
             callback(err, user)
         });
     },
 
-    authenticate: (username, password, callback) => {
-        User.findByUsername(username, (err, user) => {
-            console.log({ user, password })
-            if (user.password == password) {
-                user.connected = true;
-                return callback(user)
-            }
+
+    findUserByEmail: (username, callback) => {
+        const query = 'SELECT * FROM users WHERE email = ?';
+        db.get(query, [username], (err, user) => {
+            callback(err, user)
         });
     },
 
-    // Récupération d'un utilisateur par ID
-    findById: (id, callback) => {
-        const query = 'SELECT * FROM users WHERE id = ' + id;
-        db.get(query, [], (err, user) => {
-            return user
+    authenticate: (username, password, callback) => {
+        User.findUserByUsername(username, (err, user) => {
+            if (user != undefined && bcrypt.compareSync(password, user.password)) {
+                user.connected = true;
+                return callback(err, user)
+            }
+            else{
+                user = {
+                    connected: false
+                };
+                return callback(user)
+            }
         });
     }
 };
