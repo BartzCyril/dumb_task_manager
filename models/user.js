@@ -6,13 +6,13 @@ const User = {
         const query = 'INSERT INTO users (username, password, email) VALUES (?, ?, ?)';
         const params = [user.username, user.hash, user.email];
         db.run(query, params, function (err) {
-            callback(null, { id: this.lastID, ...user });
+            callback(err, { id: this.lastID, ...user });
         });
     },
 
     getAllUsers: (callback) => {
         db.all('SELECT * FROM users', [], (err, results) => {
-            callback(results)
+            callback(err, results)
         })
     },
 
@@ -27,7 +27,7 @@ const User = {
         User.findUserByUsername(username, (err, user) => {
             if (bcrypt.compareSync(password, user.password)) {
                 user.connected = true;
-                return callback(user)
+                return callback(err, user)
             }
         });
     }
