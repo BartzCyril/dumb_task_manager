@@ -17,13 +17,16 @@ router.post('/auth/login', (req, res) => {
             res.status(400).send("Le nom d'utilisateur ou le mot de passe est incorrect");
             return;
         }
+
+        res.status(200);
+        return;
     })
 })
 
-router.post('/user/register', (req, res) => {
-    const username = req.query.username;
-    const password = req.query.password;
-    const email = req.query.email;
+router.post('/auth/register', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    const email = req.body.email;
 
     // Vérifie si les champs ne sont pas vides
     if(!username){
@@ -69,7 +72,9 @@ router.post('/user/register', (req, res) => {
             const hash = bcrypt.hashSync(password, 10)
             users.createUser({ username, hash, email }, (err, user) => {
                 if (user) {
-                    res.redirect('/login');
+                    res.status(200);
+                    return;
+                    //res.redirect('/auth/login');
                 } else {
                     res.redirect('/');
                 }
