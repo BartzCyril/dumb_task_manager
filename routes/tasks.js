@@ -13,15 +13,15 @@ const authenticate = (req, res, next) => {
 };
 
 router.get('/', (req, res) => {
-    var userId = req.query.userId;
+    const userId = req.query.userId;
     tasks.getAllTaskByUserId(parseInt(userId), (err, data) => {
         res.render('dashboard', { data, userId })
     })
 });
 
 router.get('/remove', (req, res) => {
-    var taskId = req.query.taskId;
-    var userId = req.query.userId;
+    const taskId = req.query.taskId;
+    const userId = req.query.userId;
     if (userId) {
         tasks.deleteTask(taskId, () => {
             res.redirect(`/tasks?userId=${userId}`)
@@ -32,7 +32,7 @@ router.get('/remove', (req, res) => {
 
 router.post('/', authenticate, (req, res) => {
     const { title, description, completed } = req.body;
-    let userId = req.query.userId
+    const userId = req.query.userId
     tasks.createTask({ user_id: userId, title, description, completed: 0 }, (err, task) => {
         if (task) {
             res.redirect(`/tasks?userId=${userId}`)

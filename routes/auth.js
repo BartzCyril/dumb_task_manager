@@ -14,9 +14,9 @@ router.post('/login', (req, res) => {
     })
 })
 router.get('/user/register', (req, res) => {
-    let username = req.query.username;
-    var password = req.query.password;
-    let email = req.query.email;
+    const username = req.query.username;
+    const password = req.query.password;
+    const email = req.query.email;
     
     const hash = bcrypt.hashSync(password, 10)
     users.createUser({ username, hash, email }, (err, user) => {

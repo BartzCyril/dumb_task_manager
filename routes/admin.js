@@ -7,7 +7,6 @@ router.get('/', (req, res) => {
     users.getAllUsers((users) => {
         res.render('admin', { users })
     })
-
 })
 
 module.exports = router;
