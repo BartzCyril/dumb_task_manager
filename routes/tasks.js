@@ -15,15 +15,23 @@ const authenticate = (req, res, next) => {
 router.get('/', (req, res) => {
     const userId = req.query.userId;
     tasks.getAllTaskByUserId(parseInt(userId), (err, data) => {
+        if(err){
+            res.status(500).send(`Une erreur est survenue lors de la récupération des tâches ${err.message}`);
+            return;
+        }
         res.render('dashboard', { data, userId })
-    })
+    });
 });
 
 router.get('/remove', (req, res) => {
     const taskId = req.query.taskId;
     const userId = req.query.userId;
     if (userId) {
-        tasks.deleteTask(taskId, () => {
+        tasks.deleteTask(taskId, (err) => {
+            if(err){
+                res.status(500).send(`Une erreur est survenue lors de la suppression de la tâche ${err.message}`);
+                return;
+            }
             res.redirect(`/tasks?userId=${userId}`)
         })
     }
@@ -44,10 +52,12 @@ router.post('/', authenticate, (req, res) => {
         return;
     }
     
-    tasks.createTask({ user_id: userId, title, description, completed: 0 }, (err, task) => {
-        if (task) {
-            res.redirect(`/tasks?userId=${userId}`)
+    tasks.createTask({ user_id: userId, title, description, completed: 0 }, (err) => {
+        if (err) {
+            res.status(500).send(`Une erreur est survenue lors de la création de la tâche ${err.message}`);
+            return;
         }
+        res.redirect(`/tasks?userId=${userId}`)
     })
 });
 

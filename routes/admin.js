@@ -4,8 +4,12 @@ const users = require('../models/user');
 
 
 router.get('/', (req, res) => {
-    users.getAllUsers((users) => {
-        res.render('admin', { users })
+    users.getAllUsers((err, users) => {
+        if(err){
+            res.status(500).send(`Une erreur est survenue lors de la récupération des utilisateurs ${err.message}`);
+            return;
+        }
+        res.render('admin', { users });
     })
 })
 
