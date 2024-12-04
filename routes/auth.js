@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 // Placeholder routes for authentication
 router.get('/login', (req, res) => res.render('login', { user: undefined }));
 router.post('/login', (req, res) => {
-    users.authenticate(req.body.username, req.body.password, (user) => {
+    users.authenticate(req.body.username, req.body.password, (err, user) => {
         if(err) {
             res.status(500).send(`Une erreur est survenue lors de la connexion ${err.message}`);
             return;
