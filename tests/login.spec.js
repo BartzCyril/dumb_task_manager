@@ -60,4 +60,61 @@ describe("Tests unitaires pour login", () => {
 
         User.authenticate("user1", "password", callback)
     });
+});
+
+/* Tests fonctionnels */
+const auth = require('../routes/auth');
+const express = require("express");
+const request = require("supertest");
+const bodyParser = require('body-parser');
+
+const app = express();
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/', auth);
+
+describe('POST /auth/login', () => {
+    it('should return 400 if username doesn\'t exist', async () => {
+        const body = {
+            username: "user",
+            password: "password2"
+        }
+        const res = await request(app)
+                    .post('/auth/login')
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Accept', 'application/json')
+        
+        expect(res.status).toBe(400);
+        expect(JSON.parse(res.text).message).toBe("Le nom d'utilisateur ou le mot de passe est incorrect")
+    });
+
+    it('should return 400 if password is incorrect', async () => {
+        const body = {
+            username: "user2",
+            password: "password"
+        }
+        const res = await request(app)
+                    .post('/auth/login')
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Accept', 'application/json')
+        
+        expect(res.status).toBe(400);
+        expect(JSON.parse(res.text).message).toBe("Le nom d'utilisateur ou le mot de passe est incorrect")
+    });
+
+    it('should return 200 if it\'s good credential', async () => {
+        const body = {
+            username: "user2",
+            password: "password2"
+        }
+        const res = await request(app)
+                    .post('/auth/login')
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Accept', 'application/json')
+        
+        expect(res.status).toBe(200);
+    });
 })
