@@ -28,8 +28,7 @@ const taskRoutes = require('./routes/tasks');
 const adminRoutes = require('./routes/admin');
 
 app.get('/', (req, res) => {
-    var userId = req.query.userId
-    res.render('index', { user: undefined })
+    res.render('index', { session: req.session })
 })
 app.use('/', authRoutes);
 app.use('/tasks', taskRoutes);
