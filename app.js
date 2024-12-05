@@ -10,9 +10,12 @@ const path = require('path');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'taskmanager_secret',
-    resave: false,
-    saveUninitialized: true,
+    secret: 'ifgijddf<9394#39EDez',
+    name: "session",
+    cookie: {
+        sameSite: "lax",
+        maxAge: 86400,
+    }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -25,8 +28,7 @@ const taskRoutes = require('./routes/tasks');
 const adminRoutes = require('./routes/admin');
 
 app.get('/', (req, res) => {
-    var userId = req.query.userId
-    res.render('index', { user: undefined })
+    res.render('index', { session: req.session })
 })
 app.use('/', authRoutes);
 app.use('/tasks', taskRoutes);

@@ -3,16 +3,24 @@ const router = express.Router();
 const users = require('../models/user');
 
 router.get('/', (req, res) => {
+    if(!req.session.isAdmin){
+        res.redirect("/");
+        return;
+    }
     users.getAllUsers((err, users) => {
         if(err){
             res.status(500).send({message : `Une erreur est survenue lors de la récupération des utilisateurs ${err.message}`});
             return;
         }
-        res.render('admin', { users, user: undefined });
+        res.render('admin', { users, session: req.session });
     })
 })
 
 router.delete('/:id', (req, res) => {
+    if(!req.session.isAdmin){
+        res.redirect("/");
+        return;
+    }
     const id = req.params.id;
 
     if (!id) {

@@ -5,7 +5,14 @@ const users = require('../models/user');
 const bcrypt = require('bcrypt');
 
 // Placeholder routes for authentication
-router.get('/auth/login', (req, res) => res.render('login', { user: undefined }));
+router.get('/auth/login', (req, res) => {
+    if(req.session.isLogged){
+        res.redirect("/");
+        return;
+    }
+    res.render('login', { session: req.session });
+});
+
 router.post('/auth/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -31,9 +38,27 @@ router.post('/auth/login', (req, res) => {
             return;
         }
 
+        if(user.is_admin == 1){
+            user.is_admin = true;
+        }
+        else {
+            user.is_admin = false;
+        }
+
+        req.session.userid = user.id;
+        req.session.isLogged = true;
+        req.session.isAdmin = user.is_admin;
         res.status(200).send({redirect: "/"});
     })
-})
+});
+
+router.get('/auth/register', (req, res) => {
+    if(req.session.isLogged){
+        res.redirect("/");
+        return;
+    }
+    res.render('register', {session: req.session});
+});
 
 router.post('/auth/register', (req, res) => {
     const username = req.body.username;
@@ -83,7 +108,6 @@ router.post('/auth/register', (req, res) => {
 
             const hash = bcrypt.hashSync(password, 10)
             users.createUser({ username, hash, email }, (err, user) => {
-                console.log(err, user)
                 if (err) {
                     res.status(500).send({message: `Une erreur est survenue lors de la création de l'utilisateur ${err.message}`});
                     return;
@@ -96,7 +120,11 @@ router.post('/auth/register', (req, res) => {
             });
         });
     })
-})
-router.get('/auth/register', (req, res) => res.render('register',{ user: undefined }));
+});
+
+router.get('/auth/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect("/");
+});
 
 module.exports = router;

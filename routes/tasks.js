@@ -5,7 +5,7 @@ const router = express.Router();
 const tasks = require('../models/task')
 
 const authenticate = (req, res, next) => {
-    if (req.query.userId) {
+    if (req.session.userid) {
         next();
     } else {
         res.status(401).send('Unauthorized');
@@ -13,13 +13,17 @@ const authenticate = (req, res, next) => {
 };
 
 router.get('/', (req, res) => {
-    const userId = req.query.userId;
+    if(!req.session.isLogged){
+        res.redirect('/');
+        return;
+    }
+    const userId = req.session.userid;
     tasks.getAllTaskByUserId(parseInt(userId), (err, data) => {
         if(err){
             res.status(500).send(`Une erreur est survenue lors de la récupération des tâches ${err.message}`);
             return;
         }
-        res.render('dashboard', { data, userId })
+        res.render('dashboard', { data, userId, session: req.session })
     });
 });
 
@@ -40,7 +44,7 @@ router.get('/remove', (req, res) => {
 
 router.post('/', authenticate, (req, res) => {
     const { title, description, completed } = req.body;
-    const userId = req.query.userId
+    const userId = req.session.userid;
 
     if(!title){
         res.status(400).send("Le champ 'task title' est obligatoire");
@@ -57,7 +61,7 @@ router.post('/', authenticate, (req, res) => {
             res.status(500).send(`Une erreur est survenue lors de la création de la tâche ${err.message}`);
             return;
         }
-        res.redirect(`/tasks?userId=${userId}`)
+        res.redirect(`/tasks`)
     })
 });
 

@@ -15,7 +15,7 @@ describe("Tests unitaires pour register", () => {
                 return;
             }
             try {
-                expect(data.length).toBe(2);
+                expect(data.length).toBe(3);
                 done();
             } catch (err) {
                 done(err);
@@ -32,7 +32,7 @@ describe("Tests unitaires pour register", () => {
                 return;
             }
             try {
-                expect(data.id).toBe(1);
+                expect(data.id).toBe(2);
                 expect(data.username).toBe("user1")
                 expect(data.email).toBe("user1@example.com")
                 done();
@@ -70,7 +70,7 @@ describe("Tests unitaires pour register", () => {
                 return;
             }
             try {
-                expect(data.id).toBe(2);
+                expect(data.id).toBe(3);
                 expect(data.username).toBe("user2");
                 expect(data.email).toBe("user2@example.com");
                 done();
