@@ -38,7 +38,7 @@ router.post('/auth/login', (req, res) => {
             return;
         }
 
-        req.session.id = user.id;
+        req.session.userid = user.id;
         req.session.isLogged = true;
         res.status(200).send({redirect: "/"});
     })
@@ -49,7 +49,7 @@ router.get('/auth/register', (req, res) => {
         res.redirect("/");
         return;
     }
-    res.render('register');
+    res.render('register', {session: req.session});
 });
 
 router.post('/auth/register', (req, res) => {
