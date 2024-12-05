@@ -17,14 +17,12 @@ router.get('/', (req, res) => {
         res.redirect('/');
         return;
     }
-    console.log(req.session.userid)
     const userId = req.session.userid;
     tasks.getAllTaskByUserId(parseInt(userId), (err, data) => {
         if(err){
             res.status(500).send(`Une erreur est survenue lors de la récupération des tâches ${err.message}`);
             return;
         }
-        console.log(data);
         res.render('dashboard', { data, userId, session: req.session })
     });
 });
@@ -46,7 +44,6 @@ router.get('/remove', (req, res) => {
 
 router.post('/', authenticate, (req, res) => {
     const { title, description, completed } = req.body;
-    console.log(title);
     const userId = req.session.userid;
 
     if(!title){

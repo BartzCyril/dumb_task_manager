@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
             res.status(500).send({message : `Une erreur est survenue lors de la récupération des utilisateurs ${err.message}`});
             return;
         }
-        res.render('admin', { users, user: undefined });
+        res.render('admin', { users, session: req.session });
     })
 })
 

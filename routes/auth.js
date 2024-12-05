@@ -38,8 +38,16 @@ router.post('/auth/login', (req, res) => {
             return;
         }
 
+        if(user.is_admin == 1){
+            user.is_admin = true;
+        }
+        else {
+            user.is_admin = false;
+        }
+
         req.session.userid = user.id;
         req.session.isLogged = true;
+        req.session.isAdmin = user.is_admin;
         res.status(200).send({redirect: "/"});
     })
 });
@@ -100,7 +108,6 @@ router.post('/auth/register', (req, res) => {
 
             const hash = bcrypt.hashSync(password, 10)
             users.createUser({ username, hash, email }, (err, user) => {
-                console.log(err, user)
                 if (err) {
                     res.status(500).send({message: `Une erreur est survenue lors de la création de l'utilisateur ${err.message}`});
                     return;
