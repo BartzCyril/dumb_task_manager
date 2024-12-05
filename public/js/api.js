@@ -7,7 +7,7 @@ export const api = async (method, action, body, params = "", headers = {}) => {
         },
     };
 
-    if (method !== "GET") {
+    if (method !== "GET" && method !== "DELETE") {
         payload.body = JSON.stringify(body);
     }
 
