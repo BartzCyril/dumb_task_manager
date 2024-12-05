@@ -10,9 +10,12 @@ const path = require('path');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
-    secret: 'taskmanager_secret',
-    resave: false,
-    saveUninitialized: true,
+    secret: 'ifgijddf<9394#39EDez',
+    name: "session",
+    cookie: {
+        sameSite: "lax",
+        maxAge: 86400,
+    }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
