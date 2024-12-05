@@ -15,7 +15,7 @@ describe("Tests unitaires pour register", () => {
                 return;
             }
             try {
-                expect(data.length).toBe(2);
+                expect(data.length).toBe(3);
                 done();
             } catch (err) {
                 done(err);
