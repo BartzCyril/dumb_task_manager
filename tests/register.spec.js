@@ -1,15 +1,21 @@
+const { seedDatabase } = require('../config/seed-memory-database');
+
+beforeAll(async () => {
+    await seedDatabase();
+});
+
 /* Tests unitaires */
 const User = require('../models/user')
 
 describe("Tests unitaires pour register", () => {
-    test('Récupère tous les utilisateur', done => {
+    test('Récupère tous les utilisateurs', done => {
         function callback(err, data) {
             if(err) {
                 done(err);
                 return;
             }
             try {
-                expect(data.length).toBe(4);
+                expect(data.length).toBe(2);
                 done();
             } catch (err) {
                 done(err);
@@ -26,7 +32,7 @@ describe("Tests unitaires pour register", () => {
                 return;
             }
             try {
-                expect(data.id).toBe(9);
+                expect(data.id).toBe(1);
                 expect(data.username).toBe("user1")
                 expect(data.email).toBe("user1@example.com")
                 done();
@@ -64,7 +70,7 @@ describe("Tests unitaires pour register", () => {
                 return;
             }
             try {
-                expect(data.id).toBe(10);
+                expect(data.id).toBe(2);
                 expect(data.username).toBe("user2");
                 expect(data.email).toBe("user2@example.com");
                 done();
