@@ -1,5 +1,5 @@
 const db = require('../config/database.js')
-const bcrypt = require('bcrypt');
+const bc = require('bcrypt');
 
 const User = {
     createUser: (user, callback) => {
