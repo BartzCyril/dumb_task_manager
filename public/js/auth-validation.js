@@ -1,3 +1,5 @@
+import { api } from './api.js';
+
 const passwordConfig = {
     conditions: {
         minLength: 12,
@@ -109,7 +111,7 @@ function clearError(inputElement, errorElementId) {
     }
 }
 
-function setupRealTimeValidation() {
+export function setupRealTimeValidation() {
     const form = document.getElementById("AuthForm");
     if (!form) return;
 
@@ -159,7 +161,7 @@ function setupRealTimeValidation() {
     }
 }
 
-function submit(e) {
+export function submit(e) {
     e.preventDefault();
 
     const form = document.getElementById("AuthForm");
@@ -197,24 +199,16 @@ function submit(e) {
     }
 
     const globalError = form.querySelector('#AuthForm-error-global');
-    fetch(form.action, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ username, password, email })
-    }).then((res) => {
-        console.log(res)
-        if(form.action.includes('/auth/register')){
-            window.location.href = "/auth/login"
-        }
-        else{
-            window.location.href = "/"
-        }
-    })
-    .catch((err) => {
-            globalError.textContent = err.message;
-            globalError.classList.remove('d-none');
+
+    api("POST", form.action, {
+        username,
+        email,
+        password
+    }).then((response) => {
+        window.location.href = response.redirect;
+    }).catch((err) => {
+        globalError.textContent = err.message;
+        globalError.classList.remove('d-none');
     })
 }
 

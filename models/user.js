@@ -38,10 +38,8 @@ const User = {
                 return callback(err, user)
             }
             else{
-                user = {
-                    connected: false
-                };
-                return callback(user)
+                user = {connected: false};
+                return callback(err, user)
             }
         });
     }

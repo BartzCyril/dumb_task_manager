@@ -7,19 +7,31 @@ const bcrypt = require('bcrypt');
 // Placeholder routes for authentication
 router.get('/auth/login', (req, res) => res.render('login', { user: undefined }));
 router.post('/auth/login', (req, res) => {
-    users.authenticate(req.body.username, req.body.password, (err, user) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    if(!username){
+        res.status(400).send({message: "Le champ 'username' est obligatoire"});
+        return;
+    }
+
+    if(!password){
+        res.status(400).send({message: "Le champ 'password' est obligatoire"});
+        return;
+    }
+
+    users.authenticate(username, password, (err, user) => {
         if(err) {
-            res.status(500).send(`Une erreur est survenue lors de la connexion ${err.message}`);
+            res.status(500).send({message: `Une erreur est survenue lors de la connexion ${err.message}`});
             return;
         }
 
         if (!user.connected) {
-            res.status(400).send("Le nom d'utilisateur ou le mot de passe est incorrect");
+            res.status(400).send({message: "Le nom d'utilisateur ou le mot de passe est incorrect"});
             return;
         }
 
-        res.status(200);
-        return;
+        res.status(200).send({redirect: "/"});
     })
 })
 
@@ -30,53 +42,56 @@ router.post('/auth/register', (req, res) => {
 
     // Vérifie si les champs ne sont pas vides
     if(!username){
-        res.status(400).send("Le champ 'username' est obligatoire");
+        res.status(400).send({message: "Le champ 'username' est obligatoire"});
         return;
     }
 
     if(!email){
-        res.status(400).send("Le champ 'email' est obligatoire");
+        res.status(400).send({message: "Le champ 'email' est obligatoire"});
         return;
     }
 
     if(!password){
-        res.status(400).send("Le champ 'password' est obligatoire");
+        res.status(400).send({message: "Le champ 'password' est obligatoire"});
         return;
     }
 
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#&@"'\[\]\{\}])[A-Za-z\d#&@"'\[\]\{\}]{8,}$/
+    const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#&@*"'\[\]\{\}])[A-Za-z\d#&@*"'\[\]\{\}]{8,}$/
 
     if(!regexEmail.test(email)) {
-        res.status(400).send("Veuillez saisir une adresse mail dans le champ 'email'");
+        res.status(400).send({message : "Veuillez saisir une adresse mail dans le champ 'email'"});
         return;
     }
 
     if(!regexPassword.test(password)) {
-        res.status(400).send("Le mot de passe que vous avez saisir ne correspond pas au critière. Votre mot de passe doit contenir au moins 8 caractères, une lettre en minuscule et majucule, un nombre et un caractère spécial")
+        res.status(400).send({message : "Le mot de passe que vous avez saisir ne correspond pas au critière. Votre mot de passe doit contenir au moins 8 caractères, une lettre en minuscule et majucule, un nombre et un caractère spécial"})
         return;
     }
 
     users.findUserByUsername(username , (err, user) => {
         if(user != undefined){
-            res.status(400).send(`L'utilisateur ${username} existe déjà`);
+            res.status(400).send({message : `L'utilisateur ${username} existe déjà`});
             return;
         }
 
         users.findUserByEmail(email, (err, user) => {
             if(user != undefined){
-                res.status(400).send(`L'adresse mail ${email} existe déjà`);
+                res.status(400).send({message : `L'adresse mail ${email} existe déjà`});
                 return;
             }
 
             const hash = bcrypt.hashSync(password, 10)
             users.createUser({ username, hash, email }, (err, user) => {
-                if (user) {
-                    res.status(200);
+                console.log(err, user)
+                if (err) {
+                    res.status(500).send({message: `Une erreur est survenue lors de la création de l'utilisateur ${err.message}`});
                     return;
-                    //res.redirect('/auth/login');
+                }
+                if (user) {
+                    res.status(200).send({redirect: "/auth/login"});
                 } else {
-                    res.redirect('/');
+                    res.status(500).send({message: `Une erreur est survenue lors de la création de l'utilisateur`});
                 }
             });
         });
