@@ -14,5 +14,9 @@
     "express": "4.21.1",
     "express-session": "^1.17.3",
     "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }
