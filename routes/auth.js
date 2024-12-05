@@ -5,7 +5,14 @@ const users = require('../models/user');
 const bcrypt = require('bcrypt');
 
 // Placeholder routes for authentication
-router.get('/auth/login', (req, res) => res.render('login', { user: undefined }));
+router.get('/auth/login', (req, res) => {
+    if(req.session.isLogged){
+        res.redirect("/");
+        return;
+    }
+    res.render('login', { session: req.session });
+});
+
 router.post('/auth/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -31,9 +38,19 @@ router.post('/auth/login', (req, res) => {
             return;
         }
 
+        req.session.id = user.id;
+        req.session.isLogged = true;
         res.status(200).send({redirect: "/"});
     })
-})
+});
+
+router.get('/auth/register', (req, res) => {
+    if(req.session.isLogged){
+        res.redirect("/");
+        return;
+    }
+    res.render('register');
+});
 
 router.post('/auth/register', (req, res) => {
     const username = req.body.username;
@@ -96,7 +113,11 @@ router.post('/auth/register', (req, res) => {
             });
         });
     })
-})
-router.get('/auth/register', (req, res) => res.render('register',{ user: undefined }));
+});
+
+router.get('/auth/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect("/");
+});
 
 module.exports = router;
