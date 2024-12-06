@@ -3,14 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const tasks = require('../models/task')
-
-const authenticate = (req, res, next) => {
-    if (req.session.userid) {
-        next();
-    } else {
-        res.status(401).send('Unauthorized');
-    }
-};
+const { checkValidityofTheToken } = require('../middlewares/token');
 
 router.get('/', (req, res) => {
     if(!req.session.isLogged){
@@ -27,7 +20,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/remove', (req, res) => {
+router.get('/remove', checkValidityofTheToken, (req, res) => {
     const taskId = req.query.taskId;
     const userId = req.query.userId;
     if (userId) {
@@ -42,7 +35,7 @@ router.get('/remove', (req, res) => {
 
 })
 
-router.post('/', authenticate, (req, res) => {
+router.post('/', checkValidityofTheToken, (req, res) => {
     const { title, description, completed } = req.body;
     const userId = req.session.userid;
 
@@ -65,7 +58,7 @@ router.post('/', authenticate, (req, res) => {
     })
 });
 
-router.put('/:id', authenticate, (req, res) => {
+router.put('/:id', checkValidityofTheToken, (req, res) => {
     const { id } = req.params;
     const { title, description, completed } = req.body;
     const task = tasks.find((task) => task.id === parseInt(id));
