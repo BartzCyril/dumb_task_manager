@@ -9,7 +9,6 @@ router.get('/', (req, res) => {
     const userId = req.session.userid;
     const token = req.cookies.token;  
     let verifyToken = false;
-  
     jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
         if(!err){
             verifyToken = true;
@@ -88,16 +87,16 @@ router.put('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
         if(!task){
             res.status(404).send({message: "La tâche n'existe pas"});
             return;
+        } else {
+            tasks.updateTask({id: parseInt(id), title, description, completed}, (err) => {
+                if(err){
+                    res.status(500).send({message :`Une erreur est survenue lors de la modification de la tâche ${err.message}`});
+                    return;
+                }
+                res.status(204).send({message: "La tâche a bien été modifiée"});
+            })
         }
     });
-
-    tasks.updateTask({id: parseInt(id), title, description, completed}, (err) => {
-        if(err){
-            res.status(500).send({message :`Une erreur est survenue lors de la modification de la tâche ${err.message}`});
-            return;
-        }
-        res.status(204).send({message: "La tâche a bien été modifiée"});
-    })
 });
 
 module.exports = router;

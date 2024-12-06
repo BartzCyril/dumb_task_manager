@@ -16,6 +16,19 @@ function seedDatabase() {
                     }
                 }
             );
+            db.run('CREATE TABLE tasks (id INT, title TEXT, description TEXT, completed BOOL, user_id INT)');
+            db.run('INSERT INTO tasks (id, title, description, completed, user_id) VALUES (1, "Task 1", "Description of task 1", 0, 2)'),
+            db.run('INSERT INTO tasks (id, title, description, completed, user_id) VALUES (2, "Task 2", "Description of task 2", 0, 2)'),
+            db.run('INSERT INTO tasks (id, title, description, completed, user_id) VALUES (3, "Task 3", "Description of task 3", 0, 3)',
+                (err) => {
+                    if(err) {
+                        reject(err)
+                    }
+                    else{
+                        resolve();
+                    }
+                }
+            );
         });
     })
 }
