@@ -32,10 +32,8 @@ router.get('/', (req, res) => {
 
 router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const id = req.params.id;
-    console.log(id)
     tasks.getTaskById(id, (err, task) => {
         if (err) {
-            console.log(err)
             res.status(500).send({message: `Une erreur est survenue lors de la récupération de la tâche ${err.message}`});
             return;
         }
