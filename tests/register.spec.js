@@ -110,13 +110,14 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: true }));
-app.use('/', auth);
+app.use('/auth', auth);
 
 describe('POST /auth/register', () => {
     it('should return 400 if username is undefined', async () => {
         const body = {
             username: undefined,
             password: "Le#PetitChat1",
+            confirmPassword: "Le#PetitChat1",
             email: "unittest1@test.com"
         }
         const res = await request(app)
@@ -133,6 +134,7 @@ describe('POST /auth/register', () => {
         const body = {
             username: "unittest1",
             password: undefined,
+            confirmPassword: "Le#PetitChat1",
             email: "unittest1@test.com"
         }
         const res = await request(app)
@@ -149,6 +151,7 @@ describe('POST /auth/register', () => {
         const body = {
             username: "unittest1",
             password: "Le#PetitChat1",
+            confirmPassword: "Le#PetitChat1",
             email: undefined
         }
         const res = await request(app)
@@ -165,6 +168,7 @@ describe('POST /auth/register', () => {
         const body = {
             username: "unittest1",
             password: "Le#PetitChat1",
+            confirmPassword: "Le#PetitChat1",
             email: "unitest1"
         }
         const res = await request(app)
@@ -181,6 +185,7 @@ describe('POST /auth/register', () => {
         const body = {
             username: "unittest1",
             password: "LePetitChat1",
+            confirmPassword: "LePetitChat1",
             email: "unitest1@test.com"
         }
         const res = await request(app)
@@ -197,6 +202,7 @@ describe('POST /auth/register', () => {
         const body = {
             username: "user1",
             password: "Le#PetitChat1",
+            confirmPassword: "Le#PetitChat1",
             email: "unitest1@test.com"
         }
         const res = await request(app)
@@ -213,6 +219,7 @@ describe('POST /auth/register', () => {
         const body = {
             username: "unittest1",
             password: "Le#PetitChat1",
+            confirmPassword: "Le#PetitChat1",
             email: "user1@example.com"
         }
         const res = await request(app)
@@ -225,10 +232,27 @@ describe('POST /auth/register', () => {
         expect(JSON.parse(res.text).message).toBe("L'adresse mail user1@example.com existe déjà");
     });
 
+    it('should return 400 if password and confirmPassword are different', async () => {
+        const body = {
+            username: "unittest1",
+            password: "Le#PetitChat1",
+            confirmPassword: "Le#PetitChat2",
+            email: "unittest1@example.com"
+        }
+        const res = await request(app)
+                    .post('/auth/register')
+                    .send(body)
+                    .set('Content-Type', 'application/json')
+                    .set('Accept', 'application/json')
+
+        expect(res.status).toBe(400);
+    });
+
     it('should return 200 if everythink is ok', async () => {
         const body = {
             username: "unittest1",
             password: "Le#PetitChat1",
+            confirmPassword: "Le#PetitChat1",
             email: "unittest1@example.com"
         }
         const res = await request(app)
@@ -238,5 +262,5 @@ describe('POST /auth/register', () => {
                     .set('Accept', 'application/json')
         
         expect(res.status).toBe(200);
-    })
+    });
 })

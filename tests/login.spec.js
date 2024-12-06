@@ -70,6 +70,7 @@ const express = require("express");
 const request = require("supertest");
 const bodyParser = require('body-parser');
 const session = require('express-session');
+
 const app = express();
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
@@ -78,10 +79,10 @@ app.use(session({
     name: "session",
     cookie: {
         sameSite: "lax",
-        maxAge: 86400,
+        maxAge: 1000 * 60 * 60 * 24,
     }
 }));
-app.use('/', auth);
+app.use('/auth', auth);
 
 describe('POST /auth/login', () => {
     it('should return 400 if username doesn\'t exist', async () => {

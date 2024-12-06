@@ -1,22 +1,39 @@
 import { api } from './api.js';
 
+const generateErrorMessages = (conditions, type) => {
+    const messages = {};
+    if (type === "password") {
+        messages.minLength = `Password must be at least ${conditions.minLength} characters long`;
+        messages.minUpperCase = `Password must contain at least ${conditions.minUpperCase} uppercase letter`;
+        messages.minLowerCase = `Password must contain at least ${conditions.minLowerCase} lowercase letter`;
+        messages.minNumber = `Password must contain at least ${conditions.minNumber} number`;
+        messages.minSpecial = `Password must contain at least ${conditions.minSpecial} special character`;
+        messages.misMatch = "Passwords do not match";
+        messages.required = "Password is required";
+    } else if (type === "username") {
+        messages.minLength = `Username must be at least ${conditions.minLength} characters long`;
+        messages.maxLength = `Username cannot be longer than ${conditions.maxLength} characters`;
+        messages.pattern = "Username can only contain letters, numbers, underscores, and hyphens";
+        messages.required = "Username is required";
+    }
+    return messages;
+};
+
 const passwordConfig = {
     conditions: {
-        minLength: 12,
+        minLength: 8,
         minUpperCase: 1,
         minLowerCase: 1,
         minNumber: 1,
         minSpecial: 1
     },
-    errors: {
-        minLength: "Password must be at least 12 characters long",
-        minUpperCase: "Password must contain at least 1 uppercase letter",
-        minLowerCase: "Password must contain at least 1 lowercase letter",
-        minNumber: "Password must contain at least 1 number",
-        minSpecial: "Password must contain at least 1 special character",
-        misMatch: "Passwords do not match",
-        required: "Password is required"
-    }
+    errors: generateErrorMessages({
+        minLength: 8,
+        minUpperCase: 1,
+        minLowerCase: 1,
+        minNumber: 1,
+        minSpecial: 1
+    }, "password")
 };
 
 const usernameConfig = {
@@ -25,12 +42,10 @@ const usernameConfig = {
         maxLength: 20,
         pattern: /^[a-zA-Z0-9_-]+$/
     },
-    errors: {
-        minLength: "Username must be at least 3 characters long",
-        maxLength: "Username cannot be longer than 20 characters",
-        pattern: "Username can only contain letters, numbers, underscores, and hyphens",
-        required: "Username is required"
-    }
+    errors: generateErrorMessages({
+        minLength: 3,
+        maxLength: 20
+    }, "username")
 };
 
 function validateUsername(username) {
@@ -200,11 +215,18 @@ export function submit(e) {
 
     const globalError = form.querySelector('#AuthForm-error-global');
 
+    const todos = JSON.parse(localStorage.getItem('todos')) || [];
+
     api("POST", form.action, {
         username,
         email,
-        password
+        password,
+        confirmPassword,
+        todos
     }).then((response) => {
+        if (form.action.includes("login")) {
+            localStorage.removeItem('todos');
+        }
         window.location.href = response.redirect;
     }).catch((err) => {
         globalError.textContent = err.message;

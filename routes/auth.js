@@ -2,11 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const users = require('../models/user');
+const task = require('../models/task');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 // Placeholder routes for authentication
-router.get('/auth/login', (req, res) => {
+router.get('/login', (req, res) => {
     if(req.session.isLogged){
         res.redirect("/");
         return;
@@ -14,9 +15,10 @@ router.get('/auth/login', (req, res) => {
     res.render('login', { session: req.session });
 });
 
-router.post('/auth/login', (req, res) => {
+router.post('/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+    const todos = req.body.todos;
 
     if(!username){
         res.status(400).send({message: "Le champ 'username' est obligatoire"});
@@ -37,6 +39,12 @@ router.post('/auth/login', (req, res) => {
         if (!user.connected) {
             res.status(400).send({message: "Le nom d'utilisateur ou le mot de passe est incorrect"});
             return;
+        }
+
+        if (todos && Array.isArray(todos) && todos.length > 0) {
+            task.massCreateTask(todos.map(todo => ({ ...todo, user_id: user.id })), (err, rows) => {
+                console.log(err)
+            });
         }
 
         if(user.is_admin == 1){
@@ -62,7 +70,7 @@ router.post('/auth/login', (req, res) => {
     })
 });
 
-router.get('/auth/register', (req, res) => {
+router.get('/register', (req, res) => {
     if(req.session.isLogged){
         res.redirect("/");
         return;
@@ -70,10 +78,11 @@ router.get('/auth/register', (req, res) => {
     res.render('register', {session: req.session});
 });
 
-router.post('/auth/register', (req, res) => {
+router.post('/register', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     const email = req.body.email;
+    const confirmPassword = req.body.confirmPassword;
 
     // Vérifie si les champs ne sont pas vides
     if(!username){
@@ -91,6 +100,12 @@ router.post('/auth/register', (req, res) => {
         return;
     }
 
+    if(!confirmPassword){
+        res.status(400).send({message: "Le champ 'confirmPassword' est obligatoire"});
+        return;
+    }
+
+
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#&@*"'\[\]\{\}])[A-Za-z\d#&@*"'\[\]\{\}]{8,}$/
 
@@ -101,6 +116,11 @@ router.post('/auth/register', (req, res) => {
 
     if(!regexPassword.test(password)) {
         res.status(400).send({message : "Le mot de passe que vous avez saisir ne correspond pas au critière. Votre mot de passe doit contenir au moins 8 caractères, une lettre en minuscule et majucule, un nombre et un caractère spécial"})
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        res.status(400).send({message: "Les mots de passe ne correspondent pas"});
         return;
     }
 
@@ -132,7 +152,7 @@ router.post('/auth/register', (req, res) => {
     })
 });
 
-router.get('/auth/logout', (req, res) => {
+router.get('/logout', (req, res) => {
     res.clearCookie('token');
     req.session.destroy();
     res.redirect("/");
