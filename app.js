@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path');
+const dotenv = require('dotenv');
 
 // Middleware
 
@@ -17,6 +18,7 @@ app.use(session({
         maxAge: 86400,
     }
 }));
+dotenv.config();
 app.use(express.static(path.join(__dirname, 'public')));
 
 // View engine setup
