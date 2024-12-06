@@ -32,9 +32,10 @@ router.get('/', (req, res) => {
 
 router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const id = req.params.id;
-
+    console.log(id)
     tasks.getTaskById(id, (err, task) => {
         if (err) {
+            console.log(err)
             res.status(500).send({message: `Une erreur est survenue lors de la récupération de la tâche ${err.message}`});
             return;
         }
@@ -42,30 +43,17 @@ router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) =>
             res.status(404).send({message: "La tâche n'existe pas"});
             return;
         }
-    });
-});
 
-router.get('/remove', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
-    const taskId = req.query.taskId;
-    const userId = req.query.userId;
-    if (userId) {
-        tasks.deleteTask(taskId, (err) => {
-            if(err){
-                res.status(500).send(`Une erreur est survenue lors de la suppression de la tâche ${err.message}`);
+        tasks.deleteTask(id, (err) => {
+            if (err) {
+                res.status(500).send({message: `Une erreur est survenue lors de la suppression de la tâche ${err.message}`});
                 return;
             }
-            res.redirect(`/tasks?userId=${userId}`)
-        })
-    }
 
-    tasks.deleteTask(id, (err) => {
-        if(err){
-            res.status(500).send({message :`Une erreur est survenue lors de la suppression de la tâche ${err.message}`});
-            return;
-        }
-        res.status(204).send({message: "La tâche a bien été supprimée"});
-    })
-})
+            res.status(204).send({message: "La tâche a bien été supprimée"});
+        });
+    });
+});
 
 router.post('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const { title, description, completed } = req.body;

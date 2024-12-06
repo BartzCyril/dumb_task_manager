@@ -12,9 +12,11 @@ app.use(bodyParser.json());
 app.use(session({
     secret: 'ifgijddf<9394#39EDez',
     name: "session",
+    resave: false,
+    saveUninitialized: false,
     cookie: {
         sameSite: "lax",
-        maxAge: 1000 * 60 * 60 * 24,
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
     }
 }));
 dotenv.config();
