@@ -1,9 +1,3 @@
-const { seedDatabase } = require('../config/seed-memory-database');
-
-beforeAll(async () => {
-    await seedDatabase();
-});
-
 /* Tests unitaires */
 const User = require('../models/user')
 
@@ -102,15 +96,13 @@ describe("Tests unitaires pour register", () => {
 });
 
 /* Tests fonctionnels */
-const auth = require('../routes/auth');
-const express = require("express");
+const server = require('../server').createServer();
 const request = require("supertest");
-const bodyParser = require('body-parser');
+const { seedDatabase } = require('../config/seed-memory-database');
 
-const app = express();
-app.use(bodyParser.json())
-app.use(express.urlencoded({ extended: true }));
-app.use('/auth', auth);
+beforeAll(async () => {
+    await seedDatabase();
+})
 
 describe('POST /auth/register', () => {
     it('should return 400 if username is undefined', async () => {
@@ -120,7 +112,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "Le#PetitChat1",
             email: "unittest1@test.com"
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
@@ -137,7 +129,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "Le#PetitChat1",
             email: "unittest1@test.com"
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
@@ -154,7 +146,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "Le#PetitChat1",
             email: undefined
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
@@ -171,7 +163,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "Le#PetitChat1",
             email: "unitest1"
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
@@ -188,7 +180,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "LePetitChat1",
             email: "unitest1@test.com"
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
@@ -205,7 +197,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "Le#PetitChat1",
             email: "unitest1@test.com"
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
@@ -222,7 +214,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "Le#PetitChat1",
             email: "user1@example.com"
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
@@ -239,7 +231,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "Le#PetitChat2",
             email: "unittest1@example.com"
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
@@ -255,7 +247,7 @@ describe('POST /auth/register', () => {
             confirmPassword: "Le#PetitChat1",
             email: "unittest1@example.com"
         }
-        const res = await request(app)
+        const res = await request(server)
                     .post('/auth/register')
                     .send(body)
                     .set('Content-Type', 'application/json')
