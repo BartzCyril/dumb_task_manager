@@ -42,7 +42,7 @@ describe('test register', () => {
 
   it('Must return an error if password isn\'t long enough', () => {
     cy.get('input[name="password"]').type("test");
-    cy.get('#AuthForm-error-password').contains("Password must be at least 12 characters long");
+    cy.get('#AuthForm-error-password').contains("Password must be at least 8 characters long");
   });
 
   it('Must return an error if password doesn\'t contain at least one uppercase letter', () => {
