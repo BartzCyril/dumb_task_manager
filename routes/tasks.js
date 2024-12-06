@@ -1,10 +1,9 @@
-// @ts-nocheck
-
 const express = require('express');
 const router = express.Router();
 const tasks = require('../models/task')
 const loggedMiddleware = require('../middlewares/logged');
 const { checkValidityofTheToken } = require('../middlewares/token');
+const jwt = require('jsonwebtoken');
 
 router.get('/', (req, res) => {
     const userId = req.session.userid;
@@ -35,15 +34,16 @@ router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) =>
     const id = req.params.id;
 
     tasks.getTaskById(id, (err, task) => {
-        if(err){
-            res.status(500).send({message :`Une erreur est survenue lors de la récupération de la tâche ${err.message}`});
+        if (err) {
+            res.status(500).send({message: `Une erreur est survenue lors de la récupération de la tâche ${err.message}`});
             return;
         }
-        if(!task){
+        if (!task) {
             res.status(404).send({message: "La tâche n'existe pas"});
             return;
         }
     });
+});
 
 router.get('/remove', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const taskId = req.query.taskId;
