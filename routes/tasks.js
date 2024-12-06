@@ -4,11 +4,20 @@ const express = require('express');
 const router = express.Router();
 const tasks = require('../models/task')
 const loggedMiddleware = require('../middlewares/logged');
+const { checkValidityofTheToken } = require('../middlewares/token');
 
 router.get('/', (req, res) => {
     const userId = req.session.userid;
-
-    if (!userId) {
+    const token = req.cookies.token;  
+    let verifyToken = false;
+  
+    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+        if(!err){
+            verifyToken = true;
+        }
+    })
+  
+    if (!userId || !verifyToken) {
         res.render('index', {todos: undefined, session: {isLogged: false}});
         return;
     }
@@ -22,7 +31,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.delete('/:id', loggedMiddleware, (req, res) => {
+router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const id = req.params.id;
 
     tasks.getTaskById(id, (err, task) => {
@@ -36,6 +45,19 @@ router.delete('/:id', loggedMiddleware, (req, res) => {
         }
     });
 
+router.get('/remove', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
+    const taskId = req.query.taskId;
+    const userId = req.query.userId;
+    if (userId) {
+        tasks.deleteTask(taskId, (err) => {
+            if(err){
+                res.status(500).send(`Une erreur est survenue lors de la suppression de la tâche ${err.message}`);
+                return;
+            }
+            res.redirect(`/tasks?userId=${userId}`)
+        })
+    }
+
     tasks.deleteTask(id, (err) => {
         if(err){
             res.status(500).send({message :`Une erreur est survenue lors de la suppression de la tâche ${err.message}`});
@@ -45,8 +67,9 @@ router.delete('/:id', loggedMiddleware, (req, res) => {
     })
 })
 
-router.post('/', loggedMiddleware, (req, res) => {
-    const { title, description } = req.body;
+router.post('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
+    const { title, description, completed } = req.body;
+
     const userId = req.session.userid;
 
     if(!title){
@@ -68,7 +91,7 @@ router.post('/', loggedMiddleware, (req, res) => {
     })
 });
 
-router.put('/', loggedMiddleware, (req, res) => {
+router.put('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const { id, title, description, completed } = req.body;
 
     tasks.getTaskById(parseInt(id), (err, task) => {

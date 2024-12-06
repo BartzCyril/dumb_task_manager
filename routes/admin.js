@@ -3,8 +3,9 @@ const router = express.Router();
 const users = require('../models/user');
 const loggedMiddleware = require('../middlewares/logged');
 const adminMiddleware = require('../middlewares/admin');
+const { checkValidityofTheToken } = require('../middlewares/token');
 
-router.get('/', [loggedMiddleware, adminMiddleware], (req, res) => {
+router.get('/', [loggedMiddleware, checkValidityofTheToken, adminMiddleware], (req, res) => {
     const userId = req.session.userid;
 
     users.getAllUsers((err, users) => {
@@ -16,7 +17,11 @@ router.get('/', [loggedMiddleware, adminMiddleware], (req, res) => {
     })
 })
 
-router.delete('/:id', [loggedMiddleware, adminMiddleware], (req, res) => {
+router.delete('/:id', [loggedMiddleware, checkValidityofTheToken, adminMiddleware], (req, res) => {
+    if(!req.session.isAdmin){
+        res.redirect("/");
+        return;
+    }
     const id = req.params.id;
 
     if (!id) {

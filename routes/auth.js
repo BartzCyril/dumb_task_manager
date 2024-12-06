@@ -4,6 +4,7 @@ const router = express.Router();
 const users = require('../models/user');
 const task = require('../models/task');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // Placeholder routes for authentication
 router.get('/login', (req, res) => {
@@ -52,6 +53,15 @@ router.post('/login', (req, res) => {
         else {
             user.is_admin = false;
         }
+
+        const token = jwt.sign({
+            exp: Math.floor(Date.now() / 1000) + (60 * 60),
+            data: user.id
+        }, process.env.TOKEN_SECRET);
+
+        res.cookie('token', token, {
+            maxAge: Math.floor(Date.now() / 1000) + (60 * 60)
+        });
 
         req.session.userid = user.id;
         req.session.isLogged = true;
@@ -143,6 +153,7 @@ router.post('/register', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
+    res.clearCookie('token');
     req.session.destroy();
     res.redirect("/");
 });
