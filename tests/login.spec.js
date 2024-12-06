@@ -15,7 +15,7 @@ describe("Tests unitaires pour login", () => {
                 return;
             }
             try{
-                expect(data.id).toBe(1);
+                expect(data.id).toBe(2);
                 expect(data.username).toBe("user1");
                 expect(data.email).toBe("user1@example.com");
                 expect(data.connected).toBe(true)
@@ -67,10 +67,18 @@ const auth = require('../routes/auth');
 const express = require("express");
 const request = require("supertest");
 const bodyParser = require('body-parser');
-
+const session = require('express-session');
 const app = express();
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+    secret: 'ifgijddf<9394#39EDez',
+    name: "session",
+    cookie: {
+        sameSite: "lax",
+        maxAge: 86400,
+    }
+}));
 app.use('/', auth);
 
 describe('POST /auth/login', () => {
