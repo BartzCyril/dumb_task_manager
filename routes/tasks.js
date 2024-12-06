@@ -3,83 +3,92 @@
 const express = require('express');
 const router = express.Router();
 const tasks = require('../models/task')
-
-const authenticate = (req, res, next) => {
-    if (req.session.userid) {
-        next();
-    } else {
-        res.status(401).send('Unauthorized');
-    }
-};
+const loggedMiddleware = require('../middlewares/logged');
 
 router.get('/', (req, res) => {
-    if(!req.session.isLogged){
-        res.redirect('/');
+    const userId = req.session.userid;
+
+    if (!userId) {
+        res.render('index', {todos: undefined, session: {isLogged: false}});
         return;
     }
-    const userId = req.session.userid;
-    tasks.getAllTaskByUserId(parseInt(userId), (err, data) => {
+
+    tasks.getAllTaskByUserId(parseInt(userId), (err, todos) => {
         if(err){
-            res.status(500).send(`Une erreur est survenue lors de la récupération des tâches ${err.message}`);
+            res.status(500).send({message: `Une erreur est survenue lors de la récupération des tâches ${err.message}`});
             return;
         }
-        res.render('dashboard', { data, userId, session: req.session })
+        res.render('index', { todos, session: req.session })
     });
 });
 
-router.get('/remove', (req, res) => {
-    const taskId = req.query.taskId;
-    const userId = req.query.userId;
-    if (userId) {
-        tasks.deleteTask(taskId, (err) => {
-            if(err){
-                res.status(500).send(`Une erreur est survenue lors de la suppression de la tâche ${err.message}`);
-                return;
-            }
-            res.redirect(`/tasks?userId=${userId}`)
-        })
-    }
+router.delete('/:id', loggedMiddleware, (req, res) => {
+    const id = req.params.id;
 
+    tasks.getTaskById(id, (err, task) => {
+        if(err){
+            res.status(500).send({message :`Une erreur est survenue lors de la récupération de la tâche ${err.message}`});
+            return;
+        }
+        if(!task){
+            res.status(404).send({message: "La tâche n'existe pas"});
+            return;
+        }
+    });
+
+    tasks.deleteTask(id, (err) => {
+        if(err){
+            res.status(500).send({message :`Une erreur est survenue lors de la suppression de la tâche ${err.message}`});
+            return;
+        }
+        res.status(204).send({message: "La tâche a bien été supprimée"});
+    })
 })
 
-router.post('/', authenticate, (req, res) => {
-    const { title, description, completed } = req.body;
+router.post('/', loggedMiddleware, (req, res) => {
+    const { title, description } = req.body;
     const userId = req.session.userid;
 
     if(!title){
-        res.status(400).send("Le champ 'task title' est obligatoire");
+        res.status(400).send({message: "Le champ 'task title' est obligatoire"});
         return;
     }
 
     if(!description){
-        res.status(400).send("Le champ 'task description' est obligatoire");
+        res.status(400).send({message: "Le champ 'task description' est obligatoire"});
         return;
     }
     
-    tasks.createTask({ user_id: userId, title, description, completed: 0 }, (err) => {
+    tasks.createTask({ user_id: userId, title, description, completed: false }, (err) => {
         if (err) {
-            res.status(500).send(`Une erreur est survenue lors de la création de la tâche ${err.message}`);
+            res.status(500).send({message :`Une erreur est survenue lors de la création de la tâche ${err.message}`});
             return;
         }
-        res.redirect(`/tasks`)
+        res.status(201).send({message: "La tâche a bien été créée"});
     })
 });
 
-router.put('/:id', authenticate, (req, res) => {
-    const { id } = req.params;
-    const { title, description, completed } = req.body;
-    const task = tasks.find((task) => task.id === parseInt(id));
+router.put('/', loggedMiddleware, (req, res) => {
+    const { id, title, description, completed } = req.body;
 
-    if (!task) {
-        return res.status(404).send('Task not found');
-    }
+    tasks.getTaskById(parseInt(id), (err, task) => {
+        if(err){
+            res.status(500).send({message :`Une erreur est survenue lors de la récupération de la tâche ${err.message}`});
+            return;
+        }
+        if(!task){
+            res.status(404).send({message: "La tâche n'existe pas"});
+            return;
+        }
+    });
 
-    if (title !== undefined) task.title = title;
-    if (description !== undefined) task.description = description;
-    if (completed !== undefined) task.completed = completed;
-
-    res.json(task);
+    tasks.updateTask({id: parseInt(id), title, description, completed}, (err) => {
+        if(err){
+            res.status(500).send({message :`Une erreur est survenue lors de la modification de la tâche ${err.message}`});
+            return;
+        }
+        res.status(204).send({message: "La tâche a bien été modifiée"});
+    })
 });
-
 
 module.exports = router;

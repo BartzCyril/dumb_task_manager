@@ -34,8 +34,8 @@
             <form id="add-task-form">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="task-name" class="form-label">Task Name</label>
-                        <input type="text" id="task-name" class="form-control" placeholder="Enter task name" required>
+                        <label for="task-title" class="form-label">Task Name</label>
+                        <input type="text" id="task-title" class="form-control" placeholder="Enter task name" required>
                     </div>
                     <div class="mb-3">
                         <label for="task-description" class="form-label">Description</label>
@@ -54,8 +54,88 @@
 
 <%- include('components/footer.ejs') %>
 
-<script src="/js/todos.js"></script>
-<script>
-    //const todos = <%# JSON.stringify(todos) %>;
-    //renderTodos(todos);
+<script type="module">
+    import {closeModal, editTodo, renderTodos, saveTodosLocally, getTodosLocally, saveTodoToServer, updateTodoOnServer, deleteTodoFromServer} from "/js/todos.js";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const addTaskForm = document.getElementById('add-task-form');
+        let todos = [];
+        let editIndex = null;
+
+        const isLogged = <%- session.isLogged %>
+
+        if (isLogged) {
+            todos = <%- JSON.stringify(todos) %>
+            renderTodos(todos)
+
+            window.deleteTodo = (index) => {
+                const todoToDelete = todos[index];
+                if (todoToDelete) {
+                    deleteTodoFromServer(todoToDelete.id);
+                }
+            };
+
+            window.toggleTodoCompleted = (index) => {
+                const todo = todos[index];
+                if (todo) {
+                    todo.completed = !todo.completed;
+                    updateTodoOnServer(todo);
+                }
+            };
+
+            window.editTodo = (index) => {
+                editIndex = editTodo(editIndex, index, todos);
+            };
+        } else {
+            todos = getTodosLocally();
+            renderTodos(todos);
+
+            window.deleteTodo = (index) => {
+                todos.splice(index, 1);
+                saveTodosLocally(todos);
+                renderTodos(todos);
+            };
+
+            window.toggleTodoCompleted = (index) => {
+                todos[index].completed = !todos[index].completed;
+                saveTodosLocally(todos);
+                renderTodos(todos);
+            };
+
+            window.editTodo = (index) => {
+                editIndex = editTodo(editIndex, index, todos);
+            };
+        }
+
+        addTaskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value.trim();
+            const description = document.getElementById('task-description').value.trim();
+
+            if (title) {
+                const newTodo = {title, description, completed: false};
+
+                if (editIndex !== null) {
+                    todos[editIndex] = {...todos[editIndex], title, description};
+                    if (isLogged) {
+                        updateTodoOnServer(todos[editIndex]);
+                    }
+                    editIndex = null;
+                } else {
+                    todos.push(newTodo);
+                    if (isLogged) {
+                        saveTodoToServer(newTodo);
+                    }
+                }
+
+                if (!isLogged) {
+                    saveTodosLocally(todos);
+                }
+
+                renderTodos(todos);
+                addTaskForm.reset();
+                closeModal();
+            }
+        });
+    });
 </script>

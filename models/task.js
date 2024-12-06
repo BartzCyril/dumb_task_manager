@@ -1,6 +1,14 @@
 const db = require('../config/database.js')
 
 const Task = {
+    massCreateTask: (tasks, callback) => {
+        const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES ' + tasks.map(() => '(?, ?, ?, ?)').join(', ');
+        const params = tasks.reduce((acc, task) => [...acc, task.title, task.description, task.completed, task.user_id], []);
+        db.run(query, params, function (err, rows) {
+            callback(err, rows );
+        });
+    },
+
     createTask: (task, callback) => {
         const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES (?, ?, ?, ?)';
         const params = [task.title, task.description, task.completed, task.user_id]
@@ -16,15 +24,22 @@ const Task = {
         });
     },
 
-    updateTask: (id, task, callback) => {
+    getTaskById: (id, callback) => {
+        const query = 'SELECT * FROM tasks WHERE id = ?';
+        db.get(query, [id], (err, row) => {
+            callback(err, row);
+        });
+    },
+
+    updateTask: (task, callback) => {
         const query = `
             UPDATE tasks
             SET title = ?, description = ?, completed = ?
             WHERE id = ?
         `;
-        const params = [task.title, task.description, task.completed, id];
-        db.run(query, params, function (err) {
-            callback(err, { id, ...task });
+        const params = [task.title, task.description, task.completed, task.id];
+        db.run(query, params, function (err, row) {
+            callback(err, row);
         });
     },
 

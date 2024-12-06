@@ -14,7 +14,7 @@ app.use(session({
     name: "session",
     cookie: {
         sameSite: "lax",
-        maxAge: 86400,
+        maxAge: 1000 * 60 * 60 * 24,
     }
 }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -27,13 +27,9 @@ const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
 const adminRoutes = require('./routes/admin');
 
-app.get('/', (req, res) => {
-    res.render('index', { session: req.session })
-})
-app.use('/', authRoutes);
-app.use('/tasks', taskRoutes);
+app.use('/auth', authRoutes);
+app.use('/', taskRoutes);
 app.use('/admin', adminRoutes)
-
 
 // Server setup
 const PORT = process.env.PORT || 3000;
