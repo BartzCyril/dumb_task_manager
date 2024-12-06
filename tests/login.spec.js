@@ -1,5 +1,7 @@
 const { seedDatabase } = require('../config/seed-memory-database')
 
+jest.mock('jsonwebtoken');
+
 beforeAll(async () => {
     await seedDatabase();
 })

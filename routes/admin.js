@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const users = require('../models/user');
+const { checkValidityofTheToken } = require('../middlewares/token');
 
 router.get('/', (req, res) => {
     if(!req.session.isAdmin){
@@ -16,7 +17,7 @@ router.get('/', (req, res) => {
     })
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', checkValidityofTheToken, (req, res) => {
     if(!req.session.isAdmin){
         res.redirect("/");
         return;
