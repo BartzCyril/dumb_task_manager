@@ -4,8 +4,8 @@ const Task = {
     massCreateTask: (tasks, callback) => {
         const query = 'INSERT INTO tasks (title, description, completed, user_id) VALUES ' + tasks.map(() => '(?, ?, ?, ?)').join(', ');
         const params = tasks.reduce((acc, task) => [...acc, task.title, task.description, task.completed, task.user_id], []);
-        db.run(query, params, function (err, rows) {
-            callback(err, rows );
+        db.run(query, params, function (err) {
+            callback(err, this.changes);
         });
     },
 
@@ -38,8 +38,8 @@ const Task = {
             WHERE id = ?
         `;
         const params = [task.title, task.description, task.completed, task.id];
-        db.run(query, params, function (err, row) {
-            callback(err, row);
+        db.run(query, params, function (err) {
+            callback(err, { id: task.id });
         });
     },
 
