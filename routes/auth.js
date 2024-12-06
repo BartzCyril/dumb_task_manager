@@ -51,7 +51,10 @@ router.post('/auth/login', (req, res) => {
             data: user.id
         }, process.env.TOKEN_SECRET);
 
-        document.cookie = `token=${token}`
+        res.cookie('token', token, {
+            maxAge: Math.floor(Date.now() / 1000) + (60 * 60)
+        });
+
         req.session.userid = user.id;
         req.session.isLogged = true;
         req.session.isAdmin = user.is_admin;
@@ -130,6 +133,7 @@ router.post('/auth/register', (req, res) => {
 });
 
 router.get('/auth/logout', (req, res) => {
+    res.clearCookie('token');
     req.session.destroy();
     res.redirect("/");
 });

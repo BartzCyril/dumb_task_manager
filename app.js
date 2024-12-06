@@ -5,8 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path');
 const dotenv = require('dotenv');
-
-// Middleware
+const cookieParser = require('cookie-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -20,7 +19,7 @@ app.use(session({
 }));
 dotenv.config();
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cookieParser('sikdgfuoisodgffuhisedu'));
 // View engine setup
 app.set('view engine', 'ejs');
 
