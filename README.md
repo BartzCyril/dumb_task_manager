@@ -115,6 +115,25 @@ Dans certains fichiers, il y a des problèmes au niveau de l'indentation. Cela e
 Les tests n'existent pas.
 
 
+# Post-Mortem
+## Déroulement de l'application
+Dans un premier temps, nous avons analysé l’application afin d’identifier les dysfonctionnements, les failles de sécurité et les pistes d’amélioration.
+Ensuite, nous avons mis en commun notre travail pour rassembler tous les éléments à prendre en compte lors de notre développement.
+Nous nous sommes réparti les tâches en fonction des corrections à apporter. Cyril s’est chargé de la refonte du front-end, incluant une amélioration graphique, l’implémentation de la gestion des erreurs côté front, ainsi que la mise en place de la fonctionnalité de liste de tâches (CRUD). Pierre, quant à lui, a pris en charge la refonte du back-end, avec l’implémentation de la gestion des erreurs, des sessions et des tokens.
+La deuxième étape consistait à fusionner nos travaux, corriger les incompatibilités et effectuer des tests globaux sur l’application.
+Par la suite, nous avons réalisé des tests unitaires et fonctionnels, tout en mettant en place GitHub Actions. Cette phase a été menée en pair-programming.
+Enfin, nous avons conclu avec des tests de bout en bout (E2E) à l’aide de Cypress.
 
+## Comment êtes vous particulièrement satisfait?
+Notre collaboration s’est très bien déroulée. Nous avons apprécié travailler aussi bien individuellement qu’en équipe. Globalement, nous sommes satisfaits de l’application : nous avons pris plaisir à la développer, et elle nous a permis de mettre en pratique différentes thématiques comme les tests unitaires et fonctionnels avec Jest et Supertest, les tests de bout en bout (E2E) avec Cypress, ainsi que la création de scripts GitHub Actions.
 
- 
+## De quoi n'êtes vous pas satisfait ? Qu'est-ce qui aurait pu être amélioré ?
+Le principal problème que nous avons rencontré concernait la gestion des pull-requests. Lorsque plusieurs pull requests étaient ouvertes simultanément, nous faisions souvent face à des conflits, des commits dupliqués, et parfois le code pouvait se casser après un merge si les conflits n’étaient pas résolus correctement.
+
+Pistes d'améloration :
+- Limiter le nombre de pull requests ouvertes en parallèle
+- Veiller à ce que chacun travalle sur des fichiers différents pour éviter les chevauchements (par exemple, lorsqu’une personne travaille sur une fonctionnalité, elle devrait se limiter à certains fichiers spécifiques, tandis qu’une autre s’occupe d’une tâche touchant à d’autres fichiers).
+- Porter une plus grande attention lors des rebases et tester davantage notre code pour garantir sa stabilité.
+
+## Quelles difficultés avez-vous surmontées ? Comment auriez-vous pu éviter celà ?
+Pierre et Cyril : l’implémentation des tests unitaires et fonctionnels. Nous n’avions pas beaucoup de connaissances sur Jest et Supertest. De plus, nous avons perdu pas mal de temps à comprendre comment créer une base de données dédiée uniquement aux tests (mocks).
