@@ -4,3 +4,4 @@
 /config/db.js
 /config/tasks.sqlite
 .idea
+.env
