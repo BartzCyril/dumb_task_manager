@@ -83,7 +83,9 @@ router.post('/register', (req, res) => {
     const password = req.body.password;
     const email = req.body.email;
     const confirmPassword = req.body.confirmPassword;
-
+    
+    console.log(username, password, email, confirmPassword);
+    
     // Vérifie si les champs ne sont pas vides
     if(!username){
         res.status(400).send({message: "Le champ 'username' est obligatoire"});
@@ -108,16 +110,22 @@ router.post('/register', (req, res) => {
 
     const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#&@*"'\[\]\{\}])[A-Za-z\d#&@*"'\[\]\{\}]{8,}$/
-
+    
+    console.log(regexEmail.test(email));
+    
     if(!regexEmail.test(email)) {
         res.status(400).send({message : "Veuillez saisir une adresse mail dans le champ 'email'"});
         return;
     }
+    
+    console.log(regexPassword.test(password));
 
     if(!regexPassword.test(password)) {
         res.status(400).send({message : "Le mot de passe que vous avez saisir ne correspond pas au critière. Votre mot de passe doit contenir au moins 8 caractères, une lettre en minuscule et majucule, un nombre et un caractère spécial"})
         return;
     }
+    
+    console.log(password, confirmPassword);
 
     if (password !== confirmPassword) {
         res.status(400).send({message: "Les mots de passe ne correspondent pas"});
@@ -125,12 +133,14 @@ router.post('/register', (req, res) => {
     }
 
     users.findUserByUsername(username , (err, user) => {
+        console.log(err)
         if(user != undefined){
             res.status(400).send({message : `L'utilisateur ${username} existe déjà`});
             return;
         }
 
         users.findUserByEmail(email, (err, user) => {
+            console.log(err)
             if(user != undefined){
                 res.status(400).send({message : `L'adresse mail ${email} existe déjà`});
                 return;
@@ -138,6 +148,7 @@ router.post('/register', (req, res) => {
 
             const hash = bcrypt.hashSync(password, 10)
             users.createUser({ username, hash, email }, (err, user) => {
+                console.log(err)
                 if (err) {
                     res.status(500).send({message: `Une erreur est survenue lors de la création de l'utilisateur ${err.message}`});
                     return;
