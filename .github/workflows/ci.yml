@@ -5,7 +5,7 @@ name: dumb_task_CI
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -28,11 +28,6 @@ jobs:
           browser: chrome
         env:
           TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
-      - name: Upload Cypress screenshots
-        uses: actions/upload-artifact@v3
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots/
   build:
 
     runs-on: ubuntu-latest
