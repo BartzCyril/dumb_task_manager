@@ -1,5 +1,3 @@
-const path = require("path");
-
 function createServer () {
     const express = require('express');
     const app = express();

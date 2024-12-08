@@ -2,6 +2,21 @@ const db = require('../config/database.js')
 const bcrypt = require('bcrypt');
 
 const User = {
+    createTable: (callback) => {
+        const query = `
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                password TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                is_admin INTEGER DEFAULT 0
+            )
+        `;
+        db.run(query, (err) => {
+            callback(err);
+        });
+    },
+
     createUser: (user, callback) => {
         const query = 'INSERT INTO users (username, password, email, is_admin) VALUES (?, ?, ?, 0)';
         const params = [user.username, user.hash, user.email];

@@ -29,7 +29,7 @@ describe('test register', () => {
   });
 
   it('Return error if the email address already exist', () => {
-    cy.get('input[name="username"]').type("cypress2");
+    cy.get('input[name="username"]').type("cypress3");
     cy.get('input[name="email"]').type("cypress@test.com");
     cy.get('input[name="password"]').type("Le#petitChat1");
     cy.get('input[name="confirmPassword"').type("Le#petitChat1");
