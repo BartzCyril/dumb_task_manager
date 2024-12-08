@@ -10,6 +10,8 @@ else{
     chemin = path.join(__dirname, './tasks.sqlite')
 }
 
+console.log(chemin);
+
 // Connexion à la base de données SQLite
 const db = new sqlite3.Database(chemin, (err) => {
     if (err) {
