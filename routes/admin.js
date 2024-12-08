@@ -26,7 +26,6 @@ router.delete('/:id', [loggedMiddleware, checkValidityofTheToken, adminMiddlewar
     }
 
     users.deleteUser(id, (err, result) => {
-        console.log(err, result)
         if(err){
             res.status(500).send({message: `Une erreur est survenue lors de la suppression de l'utilisateur ${err.message}`});
             return;
