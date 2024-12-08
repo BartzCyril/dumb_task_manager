@@ -1,4 +1,4 @@
-describe('test register', () => {
+describe('test login', () => {
     beforeEach(() => {
         cy.visit('http://localhost:3000');
         cy.get('.nav-link').contains('Login').click();
