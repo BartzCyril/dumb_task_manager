@@ -9,8 +9,9 @@ function createServer () {
 
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
+    dotenv.config();
     app.use(session({
-        secret: 'ifgijddf<9394#39EDez',
+        secret: process.env.SESSION_SECRET,
         name: "session",
         resave: false,
         saveUninitialized: false,
@@ -19,9 +20,9 @@ function createServer () {
             maxAge: 1000 * 60 * 60 * 24, // 1 day
         }
     }));
-    dotenv.config();
     app.use(express.static(path.join(__dirname, 'public')));
-    app.use(cookieParser('sikdgfuoisodgffuhisedu'));
+    app.use(cookieParser(process.env.COOKIE_SECRET));
+
     // View engine setup
     app.set('view engine', 'ejs');
 
