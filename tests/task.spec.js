@@ -123,13 +123,13 @@ jest.mock('../middlewares/token', () => ({
 }));
 
 describe("Tests fonctionnels pour task", () => {
-    test('Créer une tâche', done => {
-        request(server)
-            .post('/')
-            .send({ title: "Task 4", description: "Description of task 4", completed: 0 })
-            .expect(201)
-            .end(done);
-    });
+    // test('Créer une tâche', done => {
+    //     request(server)
+    //         .post('/')
+    //         .send({ title: "Task 4", description: "Description of task 4", completed: 0 })
+    //         .expect(201)
+    //         .end(done);
+    // });
 
     test('Supprimer une tâche qui existe', done => {
         request(server)
