@@ -21,6 +21,9 @@ jobs:
       - name: Set up .env for Cypress
         run: |
           echo "TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}" > .env
+          echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> .env
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "COOKIE_SECRET=${{ secrets.COOKIE_SECRET }}" >> .env
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
@@ -28,6 +31,9 @@ jobs:
           browser: chrome
         env:
           TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+          PORT: ${{ secrets.PORT }}
+          COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
   build:
 
     runs-on: ubuntu-latest
