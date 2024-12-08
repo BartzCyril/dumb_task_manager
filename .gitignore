@@ -2,6 +2,5 @@
 /toBeRemoved/*
 *.DS_Store
 /config/db.js
-/config/tasks.sqlite
 .idea
 .env
