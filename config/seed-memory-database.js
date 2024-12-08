@@ -1,36 +1,79 @@
-const db = require('./database.js')
+const db = require('./database.js');
 
 function seedDatabase() {
     return new Promise((resolve, reject) => {
-        db.serialize(() => {
-            db.run('CREATE TABLE users (id INT, username TEXT, password TEXT, email TEXT, is_admin BOOL)');
-            db.run('INSERT INTO users (id, username, password, email, is_admin) VALUES (1, "admin", "$2b$10$DA7ohjIhQtxpuo1wlN5KvetPXArmr/VvwvpIqaKZdhoS.zhTMPkre", "admin@example.com", 1)')
-            db.run('INSERT INTO users (id, username, password, email, is_admin) VALUES (2, "user1", "$2b$10$hzw1pCfJL2hjakDvbQiDF.yzFvChm0R.XKGm5T/0BW7v5.yk3Lndi", "user1@example.com", 0)')
-            db.run('INSERT INTO users (id, username, password, email, is_admin) VALUES (3, "user2", "$2b$10$XLfS/bMt0IckfRg14csICek7LPHGrJov/Yde/f5Y7eTMlvfikIWhu", "user2@example.com", 0)', 
-                (err) => {
-                    if(err) {
-                        reject(err)
-                    }
-                    else{
+        try {
+            db.serialize(() => {
+                // Suppression des tables existantes pour assurer une base propre
+                db.run('DROP TABLE IF EXISTS tasks');
+                db.run('DROP TABLE IF EXISTS users');
+
+                // Création de la table users
+                db.run(`
+                    CREATE TABLE users (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        username TEXT NOT NULL,
+                        password TEXT NOT NULL,
+                        email TEXT NOT NULL UNIQUE,
+                        is_admin BOOLEAN NOT NULL
+                    )
+                `);
+
+                // Insertion des utilisateurs
+                const users = [
+                    { username: "admin", password: "$2b$10$DA7ohjIhQtxpuo1wlN5KvetPXArmr/VvwvpIqaKZdhoS.zhTMPkre", email: "admin@example.com", is_admin: 1 },
+                    { username: "user1", password: "$2b$10$hzw1pCfJL2hjakDvbQiDF.yzFvChm0R.XKGm5T/0BW7v5.yk3Lndi", email: "user1@example.com", is_admin: 0 },
+                    { username: "user2", password: "$2b$10$XLfS/bMt0IckfRg14csICek7LPHGrJov/Yde/f5Y7eTMlvfikIWhu", email: "user2@example.com", is_admin: 0 }
+                ];
+
+                users.forEach((user) => {
+                    db.run(
+                        `INSERT INTO users (username, password, email, is_admin)
+                        VALUES (?, ?, ?, ?)`,
+                        [user.username, user.password, user.email, user.is_admin]
+                    );
+                });
+
+                // Création de la table tasks
+                db.run(`
+                    CREATE TABLE tasks (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        title TEXT NOT NULL,
+                        description TEXT,
+                        completed BOOLEAN DEFAULT 0,
+                        user_id INTEGER NOT NULL,
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                    )
+                `);
+
+                // Insertion des tâches
+                const tasks = [
+                    { title: "Task 1", description: "Description of task 1", completed: 0, user_id: 2 },
+                    { title: "Task 2", description: "Description of task 2", completed: 0, user_id: 2 },
+                    { title: "Task 3", description: "Description of task 3", completed: 0, user_id: 3 }
+                ];
+
+                tasks.forEach((task) => {
+                    db.run(
+                        `INSERT INTO tasks (title, description, completed, user_id)
+                        VALUES (?, ?, ?, ?)`,
+                        [task.title, task.description, task.completed, task.user_id]
+                    );
+                });
+
+                // Activer les clés étrangères
+                db.run('PRAGMA foreign_keys = ON', (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
                         resolve();
                     }
-                }
-            );
-            db.run('CREATE TABLE tasks (id INT, title TEXT, description TEXT, completed BOOL, user_id INT)');
-            db.run('INSERT INTO tasks (id, title, description, completed, user_id) VALUES (1, "Task 1", "Description of task 1", 0, 2)'),
-            db.run('INSERT INTO tasks (id, title, description, completed, user_id) VALUES (2, "Task 2", "Description of task 2", 0, 2)'),
-            db.run('INSERT INTO tasks (id, title, description, completed, user_id) VALUES (3, "Task 3", "Description of task 3", 0, 3)',
-                (err) => {
-                    if(err) {
-                        reject(err)
-                    }
-                    else{
-                        resolve();
-                    }
-                }
-            );
-        });
-    })
+                });
+            });
+        } catch (err) {
+            reject(err);
+        }
+    });
 }
 
-module.exports = { seedDatabase }
+module.exports = { seedDatabase };

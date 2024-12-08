@@ -53,7 +53,7 @@ router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) =>
 });
 
 router.post('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
-    const { title, description, completed } = req.body;
+    const { title, description } = req.body;
 
     const userId = req.session.userid;
 
