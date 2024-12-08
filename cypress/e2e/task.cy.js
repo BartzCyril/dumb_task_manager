@@ -23,7 +23,7 @@ const login = () => {
     cy.url().should('eq', 'http://localhost:3000/');
 };
 
-describe('test register', () => {
+describe('test tasks', () => {
     beforeEach(() => {
         cy.visit('http://localhost:3000');
     });
