@@ -128,12 +128,13 @@ Enfin, nous avons conclu avec des tests de bout en bout (E2E) à l’aide de Cyp
 Notre collaboration s’est très bien déroulée. Nous avons apprécié travailler aussi bien individuellement qu’en équipe. Globalement, nous sommes satisfaits de l’application : nous avons pris plaisir à la développer, et elle nous a permis de mettre en pratique différentes thématiques comme les tests unitaires et fonctionnels avec Jest et Supertest, les tests de bout en bout (E2E) avec Cypress, ainsi que la création de scripts GitHub Actions.
 
 ## De quoi n'êtes vous pas satisfait ? Qu'est-ce qui aurait pu être amélioré ?
-Le principal problème que nous avons rencontré concernait la gestion des pull-requests. Lorsque plusieurs pull requests étaient ouvertes simultanément, nous faisions souvent face à des conflits, des commits dupliqués, et parfois le code pouvait se casser après un merge si les conflits n’étaient pas résolus correctement.
+Le principal problème que nous avons rencontré concernait la gestion des pull-requests. Lorsque plusieurs pull requests étaient ouvertes simultanément, nous faisions souvent face à des conflits, des commits dupliqués, et parfois le code pouvait se casser après un merge si les conflits n’étaient pas résolus correctement. Par ailleurs, par souci de temps et de simplicité, nous avons utilisé SQLite comme base de données. Cependant, cette solution présente des limites : elle n’est pas protégée par des identifiants, ce qui réduit la sécurité, et elle est moins adaptée pour des projets nécessitant une gestion avancée des accès ou des utilisateurs.
 
 Pistes d'améloration :
 - Limiter le nombre de pull requests ouvertes en parallèle
 - Veiller à ce que chacun travalle sur des fichiers différents pour éviter les chevauchements (par exemple, lorsqu’une personne travaille sur une fonctionnalité, elle devrait se limiter à certains fichiers spécifiques, tandis qu’une autre s’occupe d’une tâche touchant à d’autres fichiers).
 - Porter une plus grande attention lors des rebases et tester davantage notre code pour garantir sa stabilité.
+- Utiliser une base de données plus robuste et sécurisée, comme PostgreSQL ou MySQL.
 
 ## Quelles difficultés avez-vous surmontées ? Comment auriez-vous pu éviter celà ?
 Pierre et Cyril : l’implémentation des tests unitaires et fonctionnels. Nous n’avions pas beaucoup de connaissances sur Jest et Supertest. De plus, nous avons perdu pas mal de temps à comprendre comment créer une base de données dédiée uniquement aux tests (mocks).
