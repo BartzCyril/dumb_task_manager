@@ -5,7 +5,7 @@ name: dumb_task_CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
 
@@ -18,11 +18,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Set up .env for Cypress
+        run: |
+          echo "TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}" > .env
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           start: npm start
           browser: chrome
+        env:
+          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
   build:
 
     runs-on: ubuntu-latest
