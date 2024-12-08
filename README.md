@@ -137,3 +137,123 @@ Pistes d'améloration :
 
 ## Quelles difficultés avez-vous surmontées ? Comment auriez-vous pu éviter celà ?
 Pierre et Cyril : l’implémentation des tests unitaires et fonctionnels. Nous n’avions pas beaucoup de connaissances sur Jest et Supertest. De plus, nous avons perdu pas mal de temps à comprendre comment créer une base de données dédiée uniquement aux tests (mocks).
+
+
+# Documentation technique
+## Initialisation du projet
+Pour installer le projet, vous devez ouvrir un terminal à la racine du projet et tapez la commande : 
+```
+npm install
+```
+Vous devez également à la racine du projet un ```.env```. Vous trouverez une copie dans le rendu sur NetYParéo.
+Egalement sur NetYParéo. Vous trouverez une copie d'une nouvelle version de la base de données nécessaire au fonctionnement de l'application.
+
+Une fois tous ça fait, vous pouvez démarrer l'application avec la commande :
+```
+npm start
+```
+
+## Technologies utilisées
+Sur ce projet nous utilisons les technologies suivantes :
+- bycript (5.1.1) : pour le hashage des mots de passe
+- cookie-parser (1.4.7) : pour la gestion des cookies
+- dotenv (16.4.7) : pour l'utilisation des variables d'enrinements sur le projet
+- ejs (3.1.10) : pour le rendu des vues
+- express-session (1.17.3) : pour la gestion des sessions
+- jsonwebtoken (9.0.2) : pour la gestion des tokens JWT
+- sqlite3 (5.1.6) : langage de la base de données
+- cypress (13.16.1) : pour les tests e2e
+- jest (29.7.0) : pour les tests unitaires et fonctionnelles
+
+## Organisation du code
+Votre projet doit avoir l'achitecture suivante :
+- config
+  - database.js
+  - seed-memory-database.js
+  - tasks.sqlite
+- cypress
+  - e2e
+    - admin.cy.js
+    - login.cy.js
+    - register.cy.js
+    - task.cy.ts
+  - fixtures
+    - example.json
+  - support
+    - commands.js
+    - e2e.js
+- middlewares
+  - admin.js
+  - logged.js
+  - token.js
+- models
+  - task.js
+  - user.js
+- public
+  - css
+    - styles.css
+  - js
+    - api.js
+    - auth-validation.js
+    - todos.js
+- routes
+  - admin.js
+  - auth.js
+  - tasks.js
+- tests
+  - admin.spec.js
+  - login.spec.js
+  - register.spec.js
+  - task.spec.js
+- views
+  - components
+    - footer.ejs
+    - header.ejs
+  - admin.ejs
+  - index.ejs
+  - login.ejs
+  - register.ejs
+- .env
+- .gitignore
+- app.js
+- cypress.config.js
+- server.js
+
+Le dossier `config` sert à stocker la base de données mais aussi les fichiers pour se connecter à la base de données et alimenter la base de données pour les tests unitaires et fonctionnelles.
+
+Le dossier `cypress` stock les tests e2e de l'application (dans le dossier `e2e`). Vous pouvez configurer cypress dans le fichier à la racine `cypress.config.js`
+
+Le dossier `middlewares` sert à faire des contrôles lors des appels de certaines routes. On peu vérifier si l'utilisateur est admin, connecter où à un token.
+
+Le dossier `models` sert à stocker les requêtes SQL.
+
+Le dossier `public` stock les fichiers javascripts et css
+
+Le dossier `routes` sert à stocker toutes les routes
+
+Le dossier `tests` sert à stocker tous les tests unitaires et fonctionnels.
+
+Le dossier `views` stock tous les fichiers qui permet de faire la virtualisation
+
+## Fonctionnement de la session
+La session sert à prouver l'authentification de l'utilisateur afin qu'il accède à certaines fonctionnalités du site. Ele sert pour charger ces données ou pour vérifier si c'est un admin ou non
+
+## Fonctionnement du token JWT
+Le token JWT sert à vérifier que la personne qui fait une action (par exemple ajouter une tâche) est bien la bonne personne
+
+## Fonctionnement des tests unitaires et fonctionnels
+Les tests unitaires et fonctionnels sont stockés dans le dossier `tests`. Pour les exécuter, il faut taper la commande :
+```
+npm run tests
+```
+Les tests unitaires et fonctionnels s'exécute automatiquement après la création de chaque PR
+
+## Fonctionnnement des tests e2e
+Les tests e2e sont gérés par cypress. Pour lancer les tests e2e, vous devez avoir le projet en cours d'exécution. Sur un autre terminal, tapez la commande :
+```
+npm run cy:open
+```
+Une interface graphique devrait s'ouvrir. Selectionnez "E2E Testing" puis, sélectionnez votre navigateur. Au démarrage du navigateur, Cypress vous listera tous les fichiers de tests. Tout comme pour les tests unitaires, les tests e2e, s'exécute automatiquement après cette PR créer
+
+## Fonctionnement des tâches
+Vous pouvez créer des tâches en étant hors connexion. Les tâches seront stockés dans le cache du navigateur et se syncroniserons à la connexion d'un compte. Les tâches ce chargerons normalement à la connexion d'un compte et vous pouvez vous en ajouter, modifier, supprimer.
