@@ -1,28 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-    <div class="login-container">
-        <h1>Login</h1>
-        <!-- Vulnérabilité : Action directement sur une route avec gestion basique -->
-        <form action="/login" method="POST">
-            <div>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <!-- Vulnérabilité : Aucune vérification des entrées côté client -->
-            <button type="submit">Login</button>
-        </form>
-        <p>Don't have an account? <a href="/register">Register here</a></p>
+<%- include('components/header.ejs') %>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div>
+            <h2 class="text-center mb-4">Login</h2>
+            <form action="/auth/login" method="POST" id="AuthForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                    <div id="AuthForm-error-username" class="error d-none"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div id="AuthForm-error-password" class="error d-none"></div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+                <div id="AuthForm-error-global" class="error d-none"></div>
+            </form>
+            <p class="text-center mt-3">
+                Don't have an account? <a href="/auth/register">Register</a>
+            </p>
+        </div>
     </div>
-</body>
-</html>
+</div>
+
+<%- include('components/footer.ejs') %>
+
+<script type="module">
+    import {setupRealTimeValidation, submit} from "/js/auth-validation.js";
+
+    setupRealTimeValidation()
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("AuthForm");
+        if (form) {
+            form.addEventListener("submit", function (e) {
+                submit(e);
+            });
+        }
+    });
+</script>
+
