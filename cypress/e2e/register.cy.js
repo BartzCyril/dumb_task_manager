@@ -6,8 +6,11 @@ describe('test register', () => {
   });
 
   it('register with good credentials', () => {
-    cy.get('input[name="username"]').type("cypress");
-    cy.get('input[name="email"]').type("cypress@test.com");
+    const randomNumber = Math.floor(Math.random() * 10000000);
+    const randomEmail = `cypress${randomNumber}@test.com`;
+    const randomUsername = `cypress${randomNumber}`;
+    cy.get('input[name="username"]').type(randomUsername);
+    cy.get('input[name="email"]').type(randomEmail);
     cy.get('input[name="password"]').type("Le#petitChat1");
     cy.get('input[name="confirmPassword"').type("Le#petitChat1");
 
