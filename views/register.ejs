@@ -1,0 +1,51 @@
+<%- include('components/header.ejs') %>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div>
+            <h2 class="text-center mb-4">Register</h2>
+            <form action="/auth/register" method="POST" id="AuthForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                    <div id="AuthForm-error-username" class="error d-none"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div id="AuthForm-error-password" class="error d-none"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    <div id="AuthForm-error-confirmPassword" class="error d-none"></div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+                <div id="AuthForm-error-global" class="error d-none"></div>
+            </form>
+            <p class="text-center mt-3">
+                Already have an account? <a href="/auth/login">Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<%- include('components/footer.ejs') %>
+
+<script type="module">
+    import {setupRealTimeValidation, submit} from "/js/auth-validation.js";
+
+    setupRealTimeValidation()
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("AuthForm");
+        if (form) {
+            form.addEventListener("submit", function (e) {
+                submit(e);
+            });
+        }
+    });
+</script>

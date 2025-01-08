@@ -5,7 +5,7 @@ const { seedDatabase } = require('../config/seed-memory-database');
 jest.mock('../middlewares/logged', () => jest.fn((req, res, next) => next()));
 jest.mock('../middlewares/admin', () => jest.fn((req, res, next) => next()));
 jest.mock('../middlewares/token', () => ({
-    checkValidityOfTheToken: jest.fn((req, res, next) => next()),
+    checkValidityofTheToken: jest.fn((req, res, next) => next()),
 }));
 
 beforeAll(async () => {

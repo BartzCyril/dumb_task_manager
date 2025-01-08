@@ -119,7 +119,7 @@ beforeAll(async () => {
 
 jest.mock('../middlewares/logged', () => jest.fn((req, res, next) => next()));
 jest.mock('../middlewares/token', () => ({
-    checkValidityOfTheToken: jest.fn((req, res, next) => next()),
+    checkValidityofTheToken: jest.fn((req, res, next) => next()),
 }));
 
 describe("Tests fonctionnels pour task", () => {

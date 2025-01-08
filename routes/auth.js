@@ -8,7 +8,11 @@ const jwt = require('jsonwebtoken');
 
 // Placeholder routes for authentication
 router.get('/login', (req, res) => {
-    res.status(200).send({data: req.session.isLogged})
+    if(req.session.isLogged){
+        res.redirect("/");
+        return;
+    }
+    res.render('login', { session: req.session });
 });
 
 router.post('/login', (req, res) => {
@@ -43,7 +47,12 @@ router.post('/login', (req, res) => {
             });
         }
 
-        user.is_admin = user.is_admin === 1;
+        if(user.is_admin == 1){
+            user.is_admin = true;
+        }
+        else {
+            user.is_admin = false;
+        }
 
         const token = jwt.sign({
             exp: Math.floor(Date.now() / 1000) + (60 * 60),
@@ -57,8 +66,16 @@ router.post('/login', (req, res) => {
         req.session.userid = user.id;
         req.session.isLogged = true;
         req.session.isAdmin = user.is_admin;
-        res.status(200).send({message: "Ok"});
+        res.status(200).send({redirect: "/"});
     })
+});
+
+router.get('/register', (req, res) => {
+    if(req.session.isLogged){
+        res.redirect("/");
+        return;
+    }
+    res.render('register', {session: req.session});
 });
 
 router.post('/register', (req, res) => {
@@ -107,13 +124,13 @@ router.post('/register', (req, res) => {
     }
 
     users.findUserByUsername(username , (err, user) => {
-        if(user !== undefined){
+        if(user != undefined){
             res.status(400).send({message : `L'utilisateur ${username} existe déjà`});
             return;
         }
 
         users.findUserByEmail(email, (err, user) => {
-            if(user !== undefined){
+            if(user != undefined){
                 res.status(400).send({message : `L'adresse mail ${email} existe déjà`});
                 return;
             }
@@ -126,7 +143,7 @@ router.post('/register', (req, res) => {
                     return;
                 }
                 if (user) {
-                    res.status(200).send({message: "Inscription réussie"});
+                    res.status(200).send({redirect: "/auth/login"});
                 } else {
                     res.status(500).send({message: `Une erreur est survenue lors de la création de l'utilisateur`});
                 }
@@ -138,7 +155,7 @@ router.post('/register', (req, res) => {
 router.get('/logout', (req, res) => {
     res.clearCookie('token');
     req.session.destroy();
-    res.status(200).send({message: "Ok"});
+    res.redirect("/");
 });
 
 module.exports = router;

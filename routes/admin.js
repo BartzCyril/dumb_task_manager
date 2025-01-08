@@ -3,9 +3,9 @@ const router = express.Router();
 const users = require('../models/user');
 const loggedMiddleware = require('../middlewares/logged');
 const adminMiddleware = require('../middlewares/admin');
-const { checkValidityOfTheToken } = require('../middlewares/token');
+const { checkValidityofTheToken } = require('../middlewares/token');
 
-router.get('/', [loggedMiddleware, checkValidityOfTheToken, adminMiddleware], (req, res) => {
+router.get('/', [loggedMiddleware, checkValidityofTheToken, adminMiddleware], (req, res) => {
     const userId = req.session.userid;
 
     users.getAllUsers((err, users) => {
@@ -13,11 +13,11 @@ router.get('/', [loggedMiddleware, checkValidityOfTheToken, adminMiddleware], (r
             res.status(500).send({message : `Une erreur est survenue lors de la récupération des utilisateurs ${err.message}`});
             return;
         }
-        res.status(200).send({data: users.filter(user => user.id !== userId)});
+        res.render('admin', { users: users.filter(user => user.id !== userId), session: req.session });
     })
 })
 
-router.delete('/:id', [loggedMiddleware, checkValidityOfTheToken, adminMiddleware], (req, res) => {
+router.delete('/:id', [loggedMiddleware, checkValidityofTheToken, adminMiddleware], (req, res) => {
     const id = req.params.id;
 
     if (!id) {

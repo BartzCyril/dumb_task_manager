@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const tasks = require('../models/task')
 const loggedMiddleware = require('../middlewares/logged');
-const { checkValidityOfTheToken } = require('../middlewares/token');
+const { checkValidityofTheToken } = require('../middlewares/token');
 const jwt = require('jsonwebtoken');
 
 router.get('/', (req, res) => {
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
     })
   
     if (!userId || !verifyToken) {
-        res.status(200).send({data: []})
+        res.render('index', {todos: undefined, session: {isLogged: false}});
         return;
     }
 
@@ -25,11 +25,11 @@ router.get('/', (req, res) => {
             res.status(500).send({message: `Une erreur est survenue lors de la récupération des tâches ${err.message}`});
             return;
         }
-        res.status(200).send({data: todos})
+        res.render('index', { todos, session: req.session })
     });
 });
 
-router.delete('/:id', [loggedMiddleware, checkValidityOfTheToken], (req, res) => {
+router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const id = req.params.id;
     tasks.getTaskById(id, (err, task) => {
         if (err) {
@@ -52,7 +52,7 @@ router.delete('/:id', [loggedMiddleware, checkValidityOfTheToken], (req, res) =>
     });
 });
 
-router.post('/', [loggedMiddleware, checkValidityOfTheToken], (req, res) => {
+router.post('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const { title, description } = req.body;
 
     const userId = req.session.userid;
@@ -76,7 +76,7 @@ router.post('/', [loggedMiddleware, checkValidityOfTheToken], (req, res) => {
     })
 });
 
-router.put('/', [loggedMiddleware, checkValidityOfTheToken], (req, res) => {
+router.put('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     const { id, title, description, completed } = req.body;
 
     tasks.getTaskById(parseInt(id), (err, task) => {
@@ -86,6 +86,7 @@ router.put('/', [loggedMiddleware, checkValidityOfTheToken], (req, res) => {
         }
         if(!task){
             res.status(404).send({message: "La tâche n'existe pas"});
+            return;
         } else {
             tasks.updateTask({id: parseInt(id), title, description, completed}, (err) => {
                 if(err){
