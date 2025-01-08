@@ -3,7 +3,6 @@ function createServer () {
     const app = express();
     const bodyParser = require('body-parser');
     const session = require('express-session');
-    const path = require('path');
     const dotenv = require('dotenv');
     const cookieParser = require('cookie-parser');
 
@@ -20,11 +19,7 @@ function createServer () {
             maxAge: 1000 * 60 * 60 * 24, // 1 day
         }
     }));
-    app.use(express.static(path.join(__dirname, 'public')));
     app.use(cookieParser(process.env.COOKIE_SECRET));
-
-    // View engine setup
-    app.set('view engine', 'ejs');
 
     // Routes
     const authRoutes = require('./routes/auth');
