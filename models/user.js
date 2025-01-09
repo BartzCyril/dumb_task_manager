@@ -18,7 +18,7 @@ const User = {
     },
 
     createUser: (user, callback) => {
-        const query = 'INSERT INTO users (username, password, email, is_admin) VALUES (?, ?, ?, 0)';
+        const query = 'INSERT INTO users (username, password, email, is_admin, is_super_admin) VALUES (?, ?, ?, 0, 0)';
         const params = [user.username, user.hash, user.email];
         db.run(query, params, function (err) {
             callback(err, { id: this.lastID, ...user });

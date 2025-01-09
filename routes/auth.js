@@ -54,6 +54,13 @@ router.post('/login', (req, res) => {
             user.is_admin = false;
         }
 
+        if(user.is_super_admin == 1){
+            user.is_super_admin = true;
+        }
+        else{
+            user.is_super_admin = false;
+        }
+
         const token = jwt.sign({
             exp: Math.floor(Date.now() / 1000) + (60 * 60),
             data: user.id
@@ -66,7 +73,8 @@ router.post('/login', (req, res) => {
         req.session.userid = user.id;
         req.session.isLogged = true;
         req.session.isAdmin = user.is_admin;
-        res.status(200).send({redirect: "/"});
+        req.session.isSuperAdmin = user.is_super_admin;
+        res.status(200).send({message: "ok"});
     })
 });
 
@@ -83,7 +91,7 @@ router.post('/register', (req, res) => {
     const password = req.body.password;
     const email = req.body.email;
     const confirmPassword = req.body.confirmPassword;
-    
+
     // Vérifie si les champs ne sont pas vides
     if(!username){
         res.status(400).send({message: "Le champ 'username' est obligatoire"});
@@ -137,13 +145,13 @@ router.post('/register', (req, res) => {
 
             const hash = bcrypt.hashSync(password, 10)
             users.createUser({ username, hash, email }, (err, user) => {
-                console.log(err)
                 if (err) {
                     res.status(500).send({message: `Une erreur est survenue lors de la création de l'utilisateur ${err.message}`});
                     return;
                 }
                 if (user) {
-                    res.status(200).send({redirect: "/auth/login"});
+                    res.status(201).send({message: "ok"});
+                    return;
                 } else {
                     res.status(500).send({message: `Une erreur est survenue lors de la création de l'utilisateur`});
                 }
