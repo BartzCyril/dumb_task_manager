@@ -6,7 +6,13 @@ function createServer () {
     const path = require('path');
     const dotenv = require('dotenv');
     const cookieParser = require('cookie-parser');
+    const cors = require('cors');
 
+    app.use(cors({
+        origin: 'http://localhost:5173',
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization']
+    }))
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     dotenv.config();
