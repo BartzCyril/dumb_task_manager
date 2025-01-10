@@ -74,7 +74,8 @@ router.post('/login', (req, res) => {
         req.session.isLogged = true;
         req.session.isAdmin = user.is_admin;
         req.session.isSuperAdmin = user.is_super_admin;
-        res.status(200).send({message: "ok"});
+        
+        res.status(200).send({id: user.id, username: username, is_admin: user.is_admin, is_super_admin: user.is_super_admin});
     })
 });
 
