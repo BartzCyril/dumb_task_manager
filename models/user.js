@@ -25,6 +25,18 @@ const User = {
         });
     },
 
+    updateUser: (user, callback) => {
+        const query = `
+            UPDATE users
+            SET username = ?, email = ?, is_admin = ?
+            WHERE id = ?
+        `;
+        const params = [user.username, user.email, user.is_admin, user.id];
+        db.run(query, params, function (err) {
+            callback(err, { id: user.id })
+        });
+    },
+
     getAllUsers: (callback) => {
         db.all('SELECT * FROM users', [], (err, results) => {
             callback(err, results)
@@ -44,6 +56,13 @@ const User = {
         db.get(query, [username], (err, user) => {
             callback(err, user)
         });
+    },
+
+    findUserById: (id, callback) => {
+        const query = 'SELECT * FROM users WHERE id = ?';
+        db.get(query, [id], (err, row) => {
+            callback(err, row)
+        })
     },
 
     authenticate: (username, password, callback) => {

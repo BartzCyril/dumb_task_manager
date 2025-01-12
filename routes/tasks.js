@@ -5,19 +5,25 @@ const loggedMiddleware = require('../middlewares/logged');
 const { checkValidityofTheToken } = require('../middlewares/token');
 const jwt = require('jsonwebtoken');
 
-router.get('/', (req, res) => {
-    const userId = req.session.userid;
+router.get('/getUser/:userId', (req, res) => {
+    const userId = req.params.userId;
+    /* const userId = req.session.userid;
     const token = req.cookies.token;  
-    let verifyToken = false;
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    let verifyToken = false; */
+
+    /* jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
         if(!err){
             verifyToken = true;
         }
-    })
+    }) */
   
-    if (!userId || !verifyToken) {
-        res.render('index', {todos: undefined, session: {isLogged: false}});
+    /* if (!userId || !verifyToken) {
+        res.status(403).send({message: "Non autorisé"});
         return;
+    } */
+
+    if(!userId) {
+        res.status(403).send({message: "Non autorisé"});
     }
 
     tasks.getAllTaskByUserId(parseInt(userId), (err, todos) => {
@@ -25,11 +31,29 @@ router.get('/', (req, res) => {
             res.status(500).send({message: `Une erreur est survenue lors de la récupération des tâches ${err.message}`});
             return;
         }
-        res.render('index', { todos, session: req.session })
+        res.status(200).send({data: todos});
     });
 });
 
-router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
+router.get('/getTask/:taskId', (req, res) => {
+    const taskId = req.params.taskId;
+
+    console.log(taskId);
+
+    if(!taskId) {
+        res.status(403).send({message: "Not autorisé"});
+    }
+
+    tasks.getTaskById(parseInt(taskId), (err, task) => {
+        if(err){
+            res.status(500).send({message: `Une erreur est survenue lors de la récupération de la tâche ${err.message}`});
+            return;
+        }
+        res.status(200).send({data: task});
+    })
+})
+
+router.delete('/:id', (req, res) => {
     const id = req.params.id;
     tasks.getTaskById(id, (err, task) => {
         if (err) {
@@ -52,10 +76,10 @@ router.delete('/:id', [loggedMiddleware, checkValidityofTheToken], (req, res) =>
     });
 });
 
-router.post('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
-    const { title, description } = req.body;
+router.post('/', (req, res) => {
+    const { title, description, userId } = req.body;
 
-    const userId = req.session.userid;
+    //const userId = req.session.userid;
 
     if(!title){
         res.status(400).send({message: "Le champ 'task title' est obligatoire"});
@@ -76,7 +100,7 @@ router.post('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
     })
 });
 
-router.put('/', [loggedMiddleware, checkValidityofTheToken], (req, res) => {
+router.put('/', (req, res) => {
     const { id, title, description, completed } = req.body;
 
     tasks.getTaskById(parseInt(id), (err, task) => {
